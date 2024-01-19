@@ -141,6 +141,8 @@ head(longitudinal_data, 10)
 According to the dataset, we have 100 Netflix users, each of whom was measured for their satisfaction with a new feature three times (months 1, 2, and 3). This setup represents a balanced MLM (Multilevel Modeling) design. The satisfaction score of the Netflix user, which ranges from 1 to 5, is randomly generated for each time point. Additionally, a measure of the user's engagement, randomly chosen between 1 and 100, is recorded at each time point. Both gender and income serve as fixed effects, meaning their values remain constant across all time points for each subject.
 
 The equation of the  null model is Y<sub>ij</sub> = γ<sub>0i</sub> +ϵ<sub>ij</sub>. To fil the model in R according to the equation, we write the following code: 
+
+
 ```
 # Load the necessary library
 library(lme4)
@@ -150,28 +152,9 @@ null_model <- lm(satisfaction ~ 1, data = longitudinal_data)
 
 # View the summary of the model
 summary(null_model)
+
 ​```
-Here is the output:
 
-<img width="484" alt="Screen Shot 2024-01-19 at 4 45 38 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/63e5f772-c293-4391-8f76-d6572875457f">
-
-According to the output, the average satisfaction score across all subjects and time points is 3, with the standard deviation of the sampling distribution of the intercept at 0.08027. The p-value is significant, indicating that the mean satisfaction score significantly differs from zero. It's important to note that the degrees of freedom are 299, calculated based on the number of observations at this level (i.e., 300 satisfaction measurements across 100 individuals over three time points) minus one parameter in the model, which is the intercept.
-
-## 2. Fixed Slope Model
-
-Let's build a bit more complicated model by adding the time of measuredment, which reflects the months when each user's satisfaction was assessed, as another fixed effect in the model.
-
-satisfaction 
-ij
-​	
- =π 
-0i
-​	
- +π 
-1i
-​	
- (time)+ϵ 
-ij
 ​	
  
 
