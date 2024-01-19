@@ -66,6 +66,7 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
   * The impact of personal attributes (gender, race, etc.) on satisfaction.
   * How these personal attributes affect initial satisfaction (intercept) and its evolution over time (slope).
 
+> [!IMPORTANT]
 > Remember, the heart of your analysis lies in framing the right questions and constructing an accurate model. Running the model is comparatively straightforward.
 
 ## 3. Levels in MLM
@@ -105,7 +106,8 @@ In scenarios involving multiple time-varying predictors at Level 1, each is adde
 
 ## 1. Null Model
 To provide a practical perspective on model building and evaluation, let’s delve into this methodology using a Netflix case study as an illustrative example. To set the stage for our exploration, I'll begin by creating a simulated dataset and start with the null or fixed intercept only model.
-```set.seed(123)  # Set seed for reproducibility
+```ruby
+set.seed(123)  # Set seed for reproducibility
 
 # Set the number of subjects to be 100
 num_subjects <- 100
@@ -151,9 +153,45 @@ null_model <- lm(satisfaction ~ 1, data = longitudinal_data)
 
 # View the summary of the model
 summary(null_model)
-​```
-​	
- 
+```
+Here is the output:
+
+<img width="484" alt="Screen Shot 2024-01-19 at 4 45 38 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/63e5f772-c293-4391-8f76-d6572875457f">
+
+According to the output, the average satisfaction score across all subjects and time points is 3, with the standard deviation of the sampling distribution of the intercept at 0.08027. The p-value is significant, indicating that the mean satisfaction score significantly differs from zero. It's important to note that the degrees of freedom are 299, calculated based on the number of observations at this level (i.e., 300 satisfaction measurements across 100 individuals over three time points) minus one parameter in the model, which is the intercept.
+
+## 2. Fixed Slope Model
+
+Let's build a bit more complicated model by adding the time of measuredment, which reflects the months when each user's satisfaction was assessed, as another fixed effect in the model.
+
+satisfaction<sub>ij</sub>​= π<sub>0i</sub>​ + π<sub>1i</sub>​(time)+ ϵ<sub>ij</sub>​ 
+
+* satisfaction<sub>ij</sub>: This denotes the satisfaction score of user i at time j.
+* π<sub>0i</sub>: The intercept for individual i. This value predicts the expected satisfaction score for user i at the baseline time point, which, in our case, is month 1.
+* π<sub>1i</sub>​(time): The slope of time for user i. This coefficient indicates the extent of change in satisfaction scores for user i with each incremental month.
+Time: This is a key variable indicating the time point of measurement — month 1, 2, or 3. In different studies, time-varying variables might vary and could include factors like age, years, or other temporal measures relevant to your specific research project.
+ϵ<sub>ij</sub>​: The residual error for individual i at time j. It represents the portion of satisfaction variation that remains unexplained even after considering the time effect.
+
+Let's fit the model in R.
+
+```ruby
+​# Load the necessary package
+library(lm4)
+# Convert time to a numeric variable such that the model understands the progression of time
+longitudinal_data$time_numeric <- as.numeric(gsub("month", "", longitudinal_data$time))
+
+# Fit the linear model without random effects
+level1_fixed_model <- lm(satisfaction ~ time_numeric, data = longitudinal_data)
+
+# Display the summary of the model
+summary(level1_fixed_model)
+```
+Here is the output: 
+
+<img width="500" alt="Screen Shot 2024-01-19 at 5 22 54 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/9baaecc4-294d-48a1-90f3-7634ea03cf8e">
+
+Notice that the effects of time is not significant. In this case, I do not need to compare this model with the null model, as I know from the non-significant p-value that adding time does not substantially improve the model's fit. However, let's pretend we have a significant p-value for time effects and proceed to building the model in the next step.
+
 
 
 
