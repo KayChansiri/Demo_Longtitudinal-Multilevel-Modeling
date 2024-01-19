@@ -217,64 +217,16 @@ Notice that the effects of time is not significant. In this case, I do not need 
 
 ## 3. Random Intercept model
 Let's build a bit more complicated model to examine whether the average satisfaction score varies across Netflix users. 
-### **Level-1 Equation (Within-Subject Model):$satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>×time_numeric<sub>ij</sub>+e<sub>ij</sub>$**
+### Level-1 Equation (Within-Subject Model):satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>×time_numeric<sub>ij</sub>+e<sub>ij</sub>
 
 * satisfaction<sub>ij</sub> is the satisfaction score for the j measurement of the i subject
 * β<sub>0j</sub> is the subject-specific intercept for the i user
 *  β<sub>1</sub>  s the fixed effect of time (time_numeric), representing the average change in satisfaction score for a unit increase in time.
 *  e<sub>ij</sub> is the residual error for the j-th measurement of the i-th user.
-** Level-2 Equation (Between-Subject Model):**
-β
-0
-j
-=
-β
-00
-+
-u
-0
-j
-β 
-0j
-​	
- =β 
-00
-​	
- +u 
-0j
-​	
- 
-Where:
-β
-0
-j
-β 
-0j
-​	
-  is the subject-specific intercept for the 
-j
-j-th subject (as seen in the Level-1 equation).
-β
-00
-β 
-00
-​	
-  is the overall average intercept across all subjects.
-u
-0
-j
-u 
-0j
-​	
-  is the random effect for the 
-j
-j-th subject, representing the deviation of the 
-j
-j-th subject’s intercept from the overall average intercept.
+### Level-2 Equation (Between-Subject Model): β<sub>0j</sub> =  β<sub>00</sub> + u<sub>0j</sub>
+* β<sub>00</sub> is the overall average intercept across all subjects.
+* u<sub>0j</sub> is the random effect for the i user, representing the deviation of the user’s intercept from the overall average intercept.
 
 
 
-
-
-**
 
