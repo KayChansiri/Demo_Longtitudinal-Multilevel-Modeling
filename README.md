@@ -28,6 +28,7 @@ Before we get started, let’s discuss the differences between RM-ANOVA and Long
 * Can accommodate both categorical and continuous predictors.
 * Can be categorized into general linear mixed models, assuming a normal distribution of errors, or generalized linear mixed models, which do not assume this and can handle categorical outcomes. These models allow for various forms of change over timem including non-linear relationships.
 * Handles missing data more effectively than RM-ANOVA by using residual (or restricted) maximum likelihood (REML) for continuous outcomes or maximum likelihood for categorical outcomes, instead of ordinary least squares, which is utilized by RM-ANOVA. Both REML and ML account for non-independence and potential heteroscedasticity and autocorrelation of residuals.
+* MLM relies on t-test statistics (or z-test if we standardize the scores of variables). Keep in mind that the degrees of freedom depend on the level of the predictor. For Level 1 (Within-Subject Level), the degrees of freedom are typically based on the number of observations within each subject minus the number of parameters estimated at this level. For example, in the Netflix example, if you have three repeated measurements from the same subject and are estimating a slope and an intercept for each subject, the df for each subject would be three minus two. For Level 2 (Between-Subject Level), the degrees of freedom are generally determined by the number of groups or subjects minus the number of parameters estimated at this level. For example, if you have 50 subjects and are estimating a random intercept for each, your df at Level 2 would be 50 minus the number of parameters (such as random effects) you are estimating for the groups/subjects.
 
 ## RM-ANOVA VS MLM Equations
 To better understand the differences between those two methods, Let's look at the equations for RM-ANOVA versus MLM using the Netflix example I discussed earlier:
@@ -45,7 +46,7 @@ To better understand the differences between those two methods, Let's look at th
   *  u<sub>0i</sub> and u<sub>1i</sub> ​are the random intercept and slope, respectively, capturing individual differences.
   *  ϵ<sub>ij</sub> ​is the unique error term for each observation.
 
-The error terms in these models are different. MLM accounts for individual differences in satisfaction scores and the relationship between time and satisfaction across individuals. RM-ANOVA, on the other hand, has a single error term.
+Note that the error terms in these models differ significantly. MLM accommodates individual variances in satisfaction scores and the interplay between time and satisfaction across individuals. In contrast, RM-ANOVA employs a singular error term (ϵ<sub>ij</sub>), which captures the discrepancy between predicted and observed values for individual i at time j. Neglecting hierarchical structures in data can lead to underestimating the standard errors of regression coefficients, potentially exaggerating the statistical significance of results, known as Type I error rates. This issue frequently arises in single-level regression applied to clustered data. While RM-ANOVA addresses this to some degree by incorporating αβ<sub>ij</sub>, it has limitations such as reduced flexibility in managing missing data and not accounting for variations in intercepts and slopes across groups. Consequently, MLM is generally regarded as superior in minimizing error terms.
 
 # MLM Terminologies
 
@@ -54,7 +55,7 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
 ## 1. Fixed Effects
 * Fixed effects are assumed constant across all units in a dataset. They include fixed intercepts and fixed slopes.
 * In the Netflix example, the fixed intercept represents the average consumer satisfaction score at the start point (e.g., month 1).
-* The fixed slope is the effects of time, indicating how each unit increase in month of measurement uniformly affects satisfaction across all users.
+* The fixed slope represents how each unit increase in time uniformly affects satisfaction across all users. We can incorporate more than one predictor into the model, and thus, have more than one fixed slope. For instance, in addition to the time of measurement, we may examine whether and to what extent a one-unit increase in user engagement with the new feature (e.g., clicking on the feature, time spent viewing the new feature) can improve their satisfaction
 
 ## 2. Random Effects
 * Random effects account for variations across units, allowing individual uniqueness. They are divided into random slopes and random intercepts.
@@ -78,9 +79,101 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
 * In cases where every subject is measured on the same set schedule but the intervals are not equal, for example, everyone is measured at month 1, month 4, and month 12, the design remains balanced. Even though the interval is not consistent (e.g., 3 months from wave 1 to wave 2 and 8 months from wave 2 to wave 3), it is still considered a balanced design because the measurement schedule is consistent across subjects.
 * However, if people are measured on different schedules, then we have an imbalanced design. This scenario requires a different type of MLM approach, which is beyond the scope of this post.
 
+# General Notation in Multilevel Modeling
 
+Multilevel modeling utilizes specific subscript notation to denote levels and parameters within the model. This notation typically follows a pattern:
+* **i**: Indicates the lower-level unit (e.g., time point in longitudinal studies, students in cross-sectional educational research, etc.).
+*  **j**: Represents the higher-level unit in models with more than two levels (e.g., classrooms, schools). In longitudinal multilevel modeling, 'i' often denotes individuals, while 'j' denotes time points. Therefore, a subscript 'ij' refers to individual 'i' at time 'j'.
+*   **0, 1, 2, …, n**: These numbers as subscripts represent the indices of predictors in the model. '0' refers to the intercept; '1' to the first variable; '2' to the second variable, and so on. In cases where there is more than one number in a subscript, the first number typically denotes the order of predictors at Level 1, and the second refers to the order of predictors at Level 2. For instance:
+    * γ<sub>01</sub> represents the effect of the first Level 2 predictor on the Level 1 intercept.
+    * γ<sub>11</sub> indicates the effect of the first Level 2 predictor on the slope of the first Level 1 predictor.
+    * γ<sub>00</sub> denotes the expected value of the outcome variable when all predictors are set to the reference level. This parameter is interpreted as the average outcome across all individuals and time points, prior to considering specific effects or variations.
 
+# Model Building in Longitudinal MLM
 
+Understanding the notations in Multilevel Modeling (MLM) for longitudinal data can be challenging. To demystify this process, let's explore building an MLM model step by step. The fundamental approach to constructing a longitudinal MLM model involves starting with a basic, or null, model devoid of any predictors. This initial step helps us assess whether the average outcomes for each individual, observed across multiple time points, significantly deviate from zero.
+
+<img width="774" alt="Screen Shot 2024-01-19 at 11 00 39 AM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/b0ac34ca-ce15-4216-96ee-7ef1fbf5f698">
+
+The subsequent stage involves incorporating fixed effects, or time-varying variables, at Level 1. The objective here is to determine whether the addition of these variables offers a significant enhancement over the null model. Should this be the case, we proceed to the introduction of a random intercept term at Level 2. This addition aims to explore the variability in average outcomes across different individuals.
+
+When the inclusion of the random intercept term significantly augments the model's fit compared to the fixed-effects-only model, it signals the appropriateness of integrating a random slope term. This term enables us to examine the diversity in the relationships between predictors and outcomes across different subjects.
+
+In scenarios involving multiple time-varying predictors at Level 1, each is added sequentially to evaluate their individual contributions to improving the model's fit. The final advancement in model development involves adding time-invariant variables at Level 2, seeking to further refine the random slope model.
+
+**Throughout this modeling process, one aspect is varied at a time, facilitating a comparative analysis with the preceding model iteration to confirm improvements in model fit. Key statistical measures like the Likelihood Ratio Test (LRT), Akaike Information Criterion (AIC), and Bayesian Information Criterion (BIC) serve as valuable tools in this assessment.**
+
+## 1. Null Model
+To provide a practical perspective on model building and evaluation, let’s delve into this methodology using a Netflix case study as an illustrative example. To set the stage for our exploration, I'll begin by creating a simulated dataset and start with the null or fixed intercept only model.
+```set.seed(123)  # Set seed for reproducibility
+
+# Set the number of subjects to be 100
+num_subjects <- 100
+
+# Create a data frame for subjects with constant variables: gender and income
+subjects_df <- data.frame(
+  subject_id = 1:num_subjects,
+  gender = sample(c("male", "female"), num_subjects, replace = TRUE),
+  income = sample(c("<19999", "20000-39999", "40000-59999", "60000-79999", "80000-99999", ">100000"), num_subjects, replace = TRUE)
+)
+
+# Function to generate repeated measurements for each subject
+generate_measurements <- function(subject_id, gender, income) {
+  data.frame(
+    subject_id = subject_id,
+    time = rep(c("month1", "month2", "month3"), each = 1),
+    satisfaction = sample(1:5, 3, replace = TRUE),
+    engagement = sample(1:100, 3, replace = TRUE),
+    gender = rep(gender, 3),
+    income = rep(income, 3)
+  )
+}
+
+# Apply the function to each subject and combine the results
+longitudinal_data <- do.call(rbind, lapply(1:num_subjects, function(i) {
+  generate_measurements(subjects_df$subject_id[i], subjects_df$gender[i], subjects_df$income[i])
+}))
+
+# Print the first 10 rows of the dataset
+head(longitudinal_data, 10)
+```
+
+According to the dataset, we have 100 Netflix users, each of whom was measured for their satisfaction with a new feature three times (months 1, 2, and 3). This setup represents a balanced MLM (Multilevel Modeling) design. The satisfaction score of the Netflix user, which ranges from 1 to 5, is randomly generated for each time point. Additionally, a measure of the user's engagement, randomly chosen between 1 and 100, is recorded at each time point. Both gender and income serve as fixed effects, meaning their values remain constant across all time points for each subject.
+
+The equation of the  null model is Y<sub>ij</sub> = γ<sub>0i</sub> +ϵ<sub>ij</sub>. To fil the model in R according to the equation, we write the following code: 
+```
+# Load the necessary library
+library(lme4)
+
+# Fit the null model
+null_model <- lm(satisfaction ~ 1, data = longitudinal_data)
+
+# View the summary of the model
+summary(null_model)
+​```
+Here is the output:
+
+<img width="484" alt="Screen Shot 2024-01-19 at 4 45 38 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/63e5f772-c293-4391-8f76-d6572875457f">
+
+According to the output, the average satisfaction score across all subjects and time points is 3, with the standard deviation of the sampling distribution of the intercept at 0.08027. The p-value is significant, indicating that the mean satisfaction score significantly differs from zero. It's important to note that the degrees of freedom are 299, calculated based on the number of observations at this level (i.e., 300 satisfaction measurements across 100 individuals over three time points) minus one parameter in the model, which is the intercept.
+
+## 2. Fixed Slope Model
+
+Let's build a bit more complicated model by adding the time of measuredment, which reflects the months when each user's satisfaction was assessed, as another fixed effect in the model.
+
+satisfaction 
+ij
+​	
+ =π 
+0i
+​	
+ +π 
+1i
+​	
+ (time)+ϵ 
+ij
+​	
+ 
 
 
 
