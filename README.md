@@ -33,14 +33,14 @@ Before we get started, let’s discuss the differences between RM-ANOVA and Long
 ## RM-ANOVA VS MLM Equations
 To better understand the differences between those two methods, Let's look at the equations for RM-ANOVA versus MLM using the Netflix example I discussed earlier:
 
-**Repeated Measures ANOVA Equation**: Y<sub>ij</sub> = μ + α<sub>i</sub> + β<sub>j</sub> +(αβ)<sub>ij</sub> +ϵ<sub>ij</sub>
+**RM-ANOVA Equation**:Y<sub>ij</sub> = μ + α<sub>i</sub> + β<sub>j</sub> + (αβ)<sub>ij</sub> +  ϵ<sub>ij</sub>
  * Y<sub>ij</sub> ​is the satisfaction score for subject i at time j.
  *  μ is the overall mean satisfaction score.
  *   α<sub>i</sub> ​and β<sub>j</sub>represent the individual and time effects, respectively.
  *   (αβ)<sub>ij</sub> is the interaction effect.
  *    ϵ<sub>ij</sub>​is the error term, assumed to be equally correlated across all observations.
 
-**Multilevel Modeling Equation**:Y<sub>ij</sub>= γ<sub>00</sub>+γ<sub>10</sub>×Time<sub>ij</sub>+u<sub>0i</sub>+u<sub>1i</sub>×Time<sub>ij</sub>+ϵ<sub>ij</sub>
+**MLM Equation**:Y<sub>ij</sub>= γ<sub>00</sub>+γ<sub>10</sub>×Time<sub>ij</sub>+u<sub>0i</sub>+u<sub>1i</sub>×Time<sub>ij</sub>+ϵ<sub>ij</sub>
   * Y<sub>ij</sub>​ is the satisfaction score for subject i at time j.
   * γ<sub>00</sub> and γ<sub>10</sub>are the fixed effects for the intercept and time, respectively.
   *  u<sub>0i</sub> and u<sub>1i</sub> ​are the random intercept and slope, respectively, capturing individual differences.
@@ -80,6 +80,27 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
 * In cases where every subject is measured on the same set schedule but the intervals are not equal, for example, everyone is measured at month 1, month 4, and month 12, the design remains balanced. Even though the interval is not consistent (e.g., 3 months from wave 1 to wave 2 and 8 months from wave 2 to wave 3), it is still considered a balanced design because the measurement schedule is consistent across subjects.
 * However, if people are measured on different schedules, then we have an imbalanced design. This scenario requires a different type of MLM approach, which is beyond the scope of this post.
 
+## 6. Variance 
+* In the realm of MLM, variance is categorized into two types: Within-Group Variance (σ²) and Between-Group Variance (τ<sub>00</sub>). Within-Group Variance (σ²) refers to the variance of the residuals (e<sub>ij</sub>) at the individual level. It is calculated as the average of the squared differences between each observation and its group's predicted value.
+*  On the other hand, Between-Group Variance (τ<sub>00</sub>) pertains to the variance of the random intercepts (u<sub>ij</sub>) at the group level. This is assessed by examining the variability in the group-level intercepts to determine how much the average outcomes vary across different groups.
+*  The total variance of the outcome variable is the sum of these two components. Additionally, if your model includes random slopes, these variances will also contribute to the variance of the outcome variable.
+  
+## 7. Intraclass Correlation Coefficient (ICC)
+* Central to the discussion of variance in MLM is the concept of the Intraclass Correlation Coefficient (ICC), a pivotal metric for quantifying the proportion of variance attributable to each level. The ICC is calculated as follows:
+
+$$\[ \text{ICC} = \frac{\tau_{00}}{\tau_{00} + \sigma^2} \]$$
+
+* ICC values range from 0 to 1. Higher values, approaching 1, indicate that a significant portion of the total variance is due to differences between groups. For instance, an ICC of 1 suggests that the data aligns closely with longitudinal modeling, implying no observable change over time within subjects; instead, the variance is predominantly driven by differences between subjects. This scenario signifies that the data is not representative of clustered longitudinal patterns.
+* Conversely, an ICC close to 0, or exactly 0, indicates that time effects are highly individualized, with each person demonstrating distinct responses over time. This scenario suggests a minimal influence of group-level factors.
+* In most cases, the ICC will fall somewhere between 0 and 1. It's important to recognize ICC as a form of effect size, offering valuable insight into the relative impact of within-group versus between-group variability in your data.
+## 8. Covariance 
+* Covariance refers to the measure of how much two random variables change together. In the context of MLM, you often deal with random effects at different levels (like random intercepts and slopes), and the covariance between these effects can be informative.
+* In our example, time is nested within Netflix users. You might be interested in the covariance between the random intercept  and the random slope of time acorss users. This would tell you how much the average satisfaction scores (intercept) and the effect of time (slope) co-vary across users.
+* A positive covariance would suggest that users with higher intercepts (e.g., folks with overall higher satisfaction scores) also have higher slopes (e.g., a stronger effect of time change on satisfaction scores). A negative covariance would indicate an inverse relationship.
+## 9. Correlation
+* Correlation is related to covariance but provides a standardized measure of the relationship between variables.
+* In other words, while covariance gives you the raw magnitude of the co-variation, correlation scales this relationship to a value between -1 and 1, making it easier to interpret.
+  
 # General Notation in Multilevel Modeling
 
 Multilevel modeling utilizes specific subscript notation to denote levels and parameters within the model. This notation typically follows a pattern:
