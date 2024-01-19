@@ -28,7 +28,9 @@ Before we get started, let’s discuss the differences between RM-ANOVA and Long
 * Can accommodate both categorical and continuous predictors.
 * Can be categorized into general linear mixed models, assuming a normal distribution of errors, or generalized linear mixed models, which do not assume this and can handle categorical outcomes. These models allow for various forms of change over timem including non-linear relationships.
 * Handles missing data more effectively than RM-ANOVA by using residual (or restricted) maximum likelihood (REML) for continuous outcomes or maximum likelihood for categorical outcomes, instead of ordinary least squares, which is utilized by RM-ANOVA. Both REML and ML account for non-independence and potential heteroscedasticity and autocorrelation of residuals.
-* MLM relies on t-test statistics (or z-test if we standardize the scores of variables). Keep in mind that the degrees of freedom depend on the level of the predictor. For Level 1 (Within-Subject Level), the degrees of freedom are typically based on the number of observations within each subject minus the number of parameters estimated at this level. For example, in the Netflix example, if you have three repeated measurements from the same subject and are estimating a slope and an intercept for each subject, the df for each subject would be three minus two. For Level 2 (Between-Subject Level), the degrees of freedom are generally determined by the number of groups or subjects minus the number of parameters estimated at this level. For example, if you have 50 subjects and are estimating a random intercept for each, your df at Level 2 would be 50 minus the number of parameters (such as random effects) you are estimating for the groups/subjects.
+* MLM relies on t-test statistics (or z-test if we standardize the scores of variables). Keep in mind that the degrees of freedom depend on the level of the predictor.
+* For Level 1 (Within-Subject Level), the degrees of freedom are typically based on the number of observations within each subject minus the number of parameters estimated at this level. For example, in the Netflix example, if you have three repeated measurements from the same subject and are estimating a slope and an intercept for each subject, the df for each subject would be three minus two.
+* For Level 2 (Between-Subject Level), the degrees of freedom are generally determined by the number of groups or subjects minus the number of parameters estimated at this level. For example, if you have 50 subjects and are estimating a random intercept for each, your df at Level 2 would be 50 minus the number of parameters (such as random effects) you are estimating for the groups/subjects.
 
 ## RM-ANOVA VS MLM Equations
 To better understand the differences between those two methods, Let's look at the equations for RM-ANOVA versus MLM using the Netflix example I discussed earlier:
@@ -88,7 +90,7 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
 ## 7. Intraclass Correlation Coefficient (ICC)
 * Central to the discussion of variance in MLM is the concept of the Intraclass Correlation Coefficient (ICC), a pivotal metric for quantifying the proportion of variance attributable to each level. The ICC is calculated as follows:
 
-$$\[ \text{ICC} = \frac{\tau_{00}}{\tau_{00} + \sigma^2} \]$$
+$$\text{ICC} = \frac{\tau_{00}}{\tau_{00} + \sigma^2}\$$
 
 * ICC values range from 0 to 1. Higher values, approaching 1, indicate that a significant portion of the total variance is due to differences between groups. For instance, an ICC of 1 suggests that the data aligns closely with longitudinal modeling, implying no observable change over time within subjects; instead, the variance is predominantly driven by differences between subjects. This scenario signifies that the data is not representative of clustered longitudinal patterns.
 * Conversely, an ICC close to 0, or exactly 0, indicates that time effects are highly individualized, with each person demonstrating distinct responses over time. This scenario suggests a minimal influence of group-level factors.
@@ -213,9 +215,66 @@ Here is the output:
 
 Notice that the effects of time is not significant. In this case, I do not need to compare this model with the null model, as I know from the non-significant p-value that adding time does not substantially improve the model's fit. However, let's pretend we have a significant p-value for time effects and proceed to building the model in the next step.
 
+## 3. Random Intercept model
+Let's build a bit more complicated model to examine whether the average satisfaction score varies across Netflix users. 
+### **Level-1 Equation (Within-Subject Model):$satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>×time_numeric<sub>ij</sub>+e<sub>ij</sub>$**
+
+* satisfaction<sub>ij</sub> is the satisfaction score for the j measurement of the i subject
+* β<sub>0j</sub> is the subject-specific intercept for the i user
+*  β<sub>1</sub>  s the fixed effect of time (time_numeric), representing the average change in satisfaction score for a unit increase in time.
+*  e<sub>ij</sub> is the residual error for the j-th measurement of the i-th user.
+** Level-2 Equation (Between-Subject Model):**
+β
+0
+j
+=
+β
+00
++
+u
+0
+j
+β 
+0j
+​	
+ =β 
+00
+​	
+ +u 
+0j
+​	
+ 
+Where:
+β
+0
+j
+β 
+0j
+​	
+  is the subject-specific intercept for the 
+j
+j-th subject (as seen in the Level-1 equation).
+β
+00
+β 
+00
+​	
+  is the overall average intercept across all subjects.
+u
+0
+j
+u 
+0j
+​	
+  is the random effect for the 
+j
+j-th subject, representing the deviation of the 
+j
+j-th subject’s intercept from the overall average intercept.
 
 
 
 
 
+**
 
