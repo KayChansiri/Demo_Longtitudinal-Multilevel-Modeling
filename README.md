@@ -141,9 +141,8 @@ head(longitudinal_data, 10)
 According to the dataset, we have 100 Netflix users, each of whom was measured for their satisfaction with a new feature three times (months 1, 2, and 3). This setup represents a balanced MLM (Multilevel Modeling) design. The satisfaction score of the Netflix user, which ranges from 1 to 5, is randomly generated for each time point. Additionally, a measure of the user's engagement, randomly chosen between 1 and 100, is recorded at each time point. Both gender and income serve as fixed effects, meaning their values remain constant across all time points for each subject.
 
 The equation of the  null model is Y<sub>ij</sub> = γ<sub>0i</sub> +ϵ<sub>ij</sub>. To fil the model in R according to the equation, we write the following code: 
-
-
-```
+​
+```ruby
 # Load the necessary library
 library(lme4)
 
@@ -152,9 +151,7 @@ null_model <- lm(satisfaction ~ 1, data = longitudinal_data)
 
 # View the summary of the model
 summary(null_model)
-
 ​```
-
 ​	
  
 
