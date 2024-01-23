@@ -216,7 +216,7 @@ Here is the output:
 Notice that the effects of time is not significant. In this case, I do not need to compare this model with the null model, as I know from the non-significant p-value that adding time does not substantially improve the model's fit. However, let's pretend we have a significant p-value for time effects and proceed to building the model in the next step.
 
 ## 3. Random Intercept model
-Let's build a bit more complicated model to examine whether the average satisfaction score varies across Netflix users. 
+Let's construct a more complex model to investigate whether the average satisfaction score among Netflix users varies.
 ### Level-1 Equation (Within-Subject Model):satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>×time_numeric<sub>ij</sub>+e<sub>ij</sub>
 
 * satisfaction<sub>ij</sub> is the satisfaction score for the j measurement of the i subject
@@ -227,6 +227,58 @@ Let's build a bit more complicated model to examine whether the average satisfac
 * β<sub>00</sub> is the overall average intercept across all subjects.
 * u<sub>0j</sub> is the random effect for the i user, representing the deviation of the user’s intercept from the overall average intercept.
 
+Let's build the model in R:
+```ruby
+random_intercept_model <- lmer(satisfaction ~ time_numeric + (1 | subject_id), data = longitudinal_data)
 
+# View the summary of the model
+summary(random_intercept_model)
+```
+Here is the output: 
+
+
+<img width="443" alt="Screen Shot 2024-01-22 at 1 04 49 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/88ffcfd0-e6e7-4cd8-a024-d9a4a63ea0ec">
+
+
+* According to the output,the variance in the intercept across different subjects (`subject_id`) is 0.0174, with a standard deviation of 0.1319. This suggests some variability in the baseline satisfaction scores among different Netflix users.The residual variance is 1.9141 with a standard deviation of 1.3835, indicating the variability in satisfaction scores within subjects that is not explained by the time variable.
+* Regarding the fixed Effects, the intercept (3.22000) represents the average satisfaction score at the reference level of the `time_numeric` variable (i.e., month 1). The coefficient for `time_numeric` is -0.11000. This suggests that, on average, satisfaction scores decrease slightly as the `time_numeric` variable increases. The negative sign indicates an inverse relationship. However, the t-value of -1.124, which  is quit small,  suggest that this effect is not statistically significant. Tis is consistent with our previous model indicating the non-significance effects of time.
+* The correlation of -0.924 between the intercept and `time_numeric` reflects a strong inverse relationship, given that correlation scores range from -1 to 1. This implies that an increase in the `time_numeric` variable is generally associated with a decrease in the average satisfaction score, and vice versa. However, this zero-order correlation doesn't consider other variances/residuals that might influence the relationship between time and satisfaction scores. This explains the high correlation coefficient, despite the non-significant effect of time observed in our regression models.
+* The REML criterion at convergence (1052.8) is a measure of the model fit. Lower values generally indicate a better fit, but this metric is more useful for comparing different models on the same data. Let's compare this random intercept model with the fixed model we previously ran, using BIC and AIC.
+
+```ruby
+AIC(level1_fixed_model)
+BIC(level1_fixed_model)
+```
+
+
+```ruby
+AIC(random_intercept_model)
+BIC(random_intercept_model)
+```
+Here are the outputs: 
+
+
+<img width="279" alt="Screen Shot 2024-01-22 at 1 47 23 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/25921bd5-b337-4473-a402-285dd8fb7a78">
+
+Lower AIC and BIC values generally indicate a preferable model, suggesting that the level1_fixed model provides a better fit than the random_intercept_model. This could imply that although there are variations in user satisfaction scores, the differences across users might not be significant enough to warrant the additional complexity of the random intercept model. Let's further explore those individual differences using the ranef() function.
+
+```ruby
+ranef(random_intercept_model)
+```
+<img width="179" alt="Screen Shot 2024-01-22 at 1 53 29 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/cd825c3a-2260-44d7-b44a-dc22dc7f1593">
+
+Examining the intercepts for the first five users, we observe that each person's score slightly deviates from the average user satisfaction score. Specifically, Subject 1 has an intercept of 0.01769544, Subject 2 is at -0.008847719, Subject 3 again at 0.01769544, Subject 4 at -0.02654316, and Subject 5 at 0.03539088. These variations, while present, do not appear to be drastically varied. You may also wonder why the summary function of the lmer function does not provide any p-values of the fixed or random effects in the model. To get the p-values of the fixed effects in your model, you may use the lmerTest instead of the lme4 package that we have been using in this tutorial. Both packages are sutiable for liner mixed models and provide the lmer function for model fitting. However, the lmerTest does provide p- values of the fixed effects in the output: 
+
+```ruby
+random_intercept_model <- lmerTest::lmer(satisfaction ~ time_numeric + (1 | subject_id), data = longitudinal_data)
+
+# View the summary of the model
+summary(random_intercept_model)
+```
+
+<img width="633" alt="Screen Shot 2024-01-22 at 2 02 44 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/381da6d1-48aa-4f68-8277-760e89d6d186">
+Your statement can be refined for grammar and clarity as follows:
+
+As of now, neither the `lme4` nor the `lmerTest` packages provide p-values for the random intercepts in multilevel models (MLM). This is because the significance of random effects is primarily assessed based on the variance components associated with these effects. Essentially, understanding the significance of random effects involves estimating the extent of variability in the data in terms of the slopes or intercepts of the variables of interest. Therefore, to determine if a model is improved by including a random effect, common approaches include using model fit measures such as likelihood ratio tests, AIC, or BIC.
 
 
