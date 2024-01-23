@@ -277,8 +277,38 @@ summary(random_intercept_model)
 ```
 
 <img width="633" alt="Screen Shot 2024-01-22 at 2 02 44 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/381da6d1-48aa-4f68-8277-760e89d6d186">
-Your statement can be refined for grammar and clarity as follows:
+
 
 As of now, neither the `lme4` nor the `lmerTest` packages provide p-values for the random intercepts in multilevel models (MLM). This is because the significance of random effects is primarily assessed based on the variance components associated with these effects. Essentially, understanding the significance of random effects involves estimating the extent of variability in the data in terms of the slopes or intercepts of the variables of interest. Therefore, to determine if a model is improved by including a random effect, common approaches include using model fit measures such as likelihood ratio tests, AIC, or BIC.
 
+In addition to identifying the random effects for each case in the dataset using the ranef() function, you can employ fixef() to obtain the intercept and coefficients of the fixed effects in your model. Furthermore, the coef() function allows you to retrieve both the intercepts and fixed effects for each individual case in the dataset, as illustrated below:
 
+<img width="566" alt="Screen Shot 2024-01-23 at 7 38 17 AM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/8747e422-42a8-48b5-8f02-117333d9faec">
+
+<img width="266" alt="Screen Shot 2024-01-23 at 7 39 58 AM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/f720e931-2dc8-4078-8de4-3d1d2752d219">
+
+## 4. Random Slope Model 
+Although the previous model suggests that including a random intercept term may not significantly improve the model, let's assume it does for the sake of continuing our model testing process. In this step, I'll include a random slope for time to explore if different users exhibit varying satisfaction levels as time progresses. To address the research question, we can formulate the following equations:
+### ### Level-1 Equation (Within-Subject Model):satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>×time_numeric<sub>ij</sub>+e<sub>ij</sub>
+* satisfaction<sub>ij</sub> is the satisfaction score for the i measurement of the j user
+* β<sub>0j</sub> is the subject-specific intercept for the j user
+*  β<sub>1</sub>  s the fixed effect of time (time_numeric), representing the average change in satisfaction score for a unit increase in time.
+*  e<sub>ij</sub> is the residual error for the j-th measurement of the i-th user.
+### Level-2 Equation (Between-Subject Model/Random Intercept): β<sub>0j</sub> =  γ<sub>00</sub> + u<sub>0j</sub>
+* β<sub>00</sub> is the overall average intercept across all subjects.
+* u<sub>0j</sub> is the random effect for the i user, representing the deviation of the user’s intercept from the overall average intercept.
+### Level-2 Equation (Between-Subject Model/Random Slope): β<sub>1</sub>×time_numeric<sub>ij</sub> =  γ<sub>01</sub> + u<sub>1j</sub>
+* γ<sub>01</sub> is the overall average slope (effect of time) across all users.
+* u<sub>1j</sub> is are the random effects capturing the deviation of the j<sup>th</sup> user's intercept and slope from the overall averages, respectively. Let's program this in R.
+
+```ruby
+random_slope_model <- lmer(satisfaction ~ time_numeric + (time_numeric | subject_id), data = longitudinal_data)
+
+# View the summary of the model
+summary(random_slope_model)
+```
+
+Here is the output:
+<img width="678" alt="Screen Shot 2024-01-23 at 2 25 07 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/363dd9a6-c13b-4f73-abc5-4e9103cbf95e">
+
+The output indicates the warning "boundary (singular) fit", which suggests that the model might be overfitting or that there isn't enough data to support the complexity of the model, especially with regard to the random effects structure. This is not surprising as our generated data may not have enough variation in satisfaction scores across users to estimate the random slopes. In other words, users are not significantly different in their satisfaction change across time, which is consistent with the non-significant effects of time that we found in the previous model. If this assumption is true and we compare the model fit of  our random slope against the random intercpet models, the fit would not change much:
