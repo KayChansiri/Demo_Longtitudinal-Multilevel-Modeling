@@ -338,7 +338,7 @@ subjects_df$random_intercept <- rnorm(num_subjects, mean = 0, sd = 2)  # Adjust 
 # Function to generate repeated measurements for each subject
 generate_measurements <- function(subject_id, gender, income, random_intercept) {
   # Base satisfaction level for each time point
-  satisfaction_base <- c(1, 2, 3)  # Fixed effect of time (increasing satisfaction)
+  satisfaction_base <- c(1, 2, 3)  # Fixed effect of time (increasing satisfaction) to simulate a scenario where satisfaction increases by one unit with each subsequent month.
   data.frame(
     subject_id = subject_id,
     time = rep(c("month1", "month2", "month3"), each = 1),
@@ -359,5 +359,47 @@ longitudinal_data <- do.call(rbind, lapply(1:num_subjects, function(i) {
 head(longitudinal_data, 10)
 
 ```
+Now, let's redo the whole model building process using the new dataset, starting from the null model. 
+
+## Model Building with the New Dataset 
+### Null Model
+
+```ruby
+library(lme4)
+
+# Fit the null model
+null_model <- lm(satisfaction ~ 1, data = longitudinal_data)
+
+# View the summary of the model
+summary(null_model)
+```
+
+<img width="528" alt="Screen Shot 2024-01-23 at 5 02 50 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/8be93782-46fc-401c-8f91-934eed194b4a">
+
+### Fixed Slope Model
+
+```ruby
+longitudinal_data$time_numeric <- as.numeric(gsub("month", "", longitudinal_data$time))
+
+# Fit the linear model without random effects
+level1_fixed_model <- lm(satisfaction ~ time_numeric, data = longitudinal_data)
+
+# Display the summary of the model
+summary(level1_fixed_model)
+```
+
+<img width="555" alt="Screen Shot 2024-01-23 at 5 05 35 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/7cab70ff-a79d-451e-be29-ae66df6ea67d">
+
+
+### Random Intercept Model
+```ruby
+
+```
+
+
+
+ICC
+BIC 
+CoVacc
 
 
