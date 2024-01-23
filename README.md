@@ -309,6 +309,55 @@ summary(random_slope_model)
 ```
 
 Here is the output:
+
+
 <img width="678" alt="Screen Shot 2024-01-23 at 2 25 07 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/363dd9a6-c13b-4f73-abc5-4e9103cbf95e">
 
-The output indicates the warning "boundary (singular) fit", which suggests that the model might be overfitting or that there isn't enough data to support the complexity of the model, especially with regard to the random effects structure. This is not surprising as our generated data may not have enough variation in satisfaction scores across users to estimate the random slopes. In other words, users are not significantly different in their satisfaction change across time, which is consistent with the non-significant effects of time that we found in the previous model. If this assumption is true and we compare the model fit of  our random slope against the random intercpet models, the fit would not change much:
+The output displays a warning of a "boundary (singular) fit," indicating potential overfitting or insufficient data to support the complexity of the model, especially in terms of its random effects structure. This finding is not surprising, as our generated data might lack sufficient variation in satisfaction scores across users to estimate random slopes accurately. Essentially, this suggests that there is no significant difference in how users' satisfaction changes over time, consistent with the non-significant time effects observed in the previous model.
+
+To test this assumption, let's generate a new dataset that introduces greater variability in baseline satisfaction scores across users and ensures that users' satisfaction consistently increases or decreases over the months. This is to see whether we still get the boundary (singular) fit warning message.
+
+
+```ruby
+set.seed(123)  # Set seed for reproducibility
+
+# Number of subjects
+num_subjects <- 100
+
+# Create a data frame for subjects with constant variables: gender and income
+subjects_df <- data.frame(
+  subject_id = 1:num_subjects,
+  gender = sample(c("male", "female"), num_subjects, replace = TRUE),
+  income = sample(c("<19999", "20000-39999", "40000-59999", "60000-79999", "80000-99999", ">100000"), num_subjects, replace = TRUE)
+)
+
+# Adding a random intercept for each subject to introduce variability
+set.seed(123)  # Ensure reproducibility
+subjects_df$random_intercept <- rnorm(num_subjects, mean = 0, sd = 2)  # Adjust mean and sd as needed
+
+# Function to generate repeated measurements for each subject
+generate_measurements <- function(subject_id, gender, income, random_intercept) {
+  # Base satisfaction level for each time point
+  satisfaction_base <- c(1, 2, 3)  # Fixed effect of time (increasing satisfaction)
+  data.frame(
+    subject_id = subject_id,
+    time = rep(c("month1", "month2", "month3"), each = 1),
+    time_numeric = rep(1:3, each = 1),
+    satisfaction = satisfaction_base + random_intercept + sample(-1:1, 3, replace = TRUE),  # Add variability
+    engagement = sample(1:100, 3, replace = TRUE),
+    gender = rep(gender, 3),
+    income = rep(income, 3)
+  )
+}
+
+# Apply the function to each subject and combine the results
+longitudinal_data <- do.call(rbind, lapply(1:num_subjects, function(i) {
+  generate_measurements(subjects_df$subject_id[i], subjects_df$gender[i], subjects_df$income[i], subjects_df$random_intercept[i])
+}))
+
+# Print the first 10 rows of the dataset
+head(longitudinal_data, 10)
+
+```
+
+
