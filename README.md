@@ -28,8 +28,8 @@ Before we get started, let’s discuss the differences between RM-ANOVA and Long
 
 * It is, therefore, somewhat unrealistic to presume that everyone would begin with the same opinion and alter their attitudes or behaviors at an identical pace as time progresses.
 * RM-ANOVA also struggles with missing data, as it employs ordinary least squares. If a user misses a survey, their data is excluded from the analysis.
-* Best used for designs with few time points, such as a pre-post design, since only two data points may not adequately capture individual changes over time.
-* To learn more about how F statistics for multilevel modeling are calculated, I found [this article](https://statistics.laerd.com/statistical-guides/repeated-measures-anova-statistical-guide.php) very helpful.
+* Best used for designs with few time points, such as a pre-post design, since only two data points may not adequately capture individual changes over time to be analyzed by MLM.
+* To learn more about how F statistics for RM-ANOVA are calculated, I found [this article](https://statistics.laerd.com/statistical-guides/repeated-measures-anova-statistical-guide.php) very helpful.
 
 ## MLM
 
