@@ -15,9 +15,18 @@ Before we get started, let’s discuss the differences between RM-ANOVA and Long
 * Predominantly used for discrete/categorical predictors.
 * Time-varying variables, like the wave of measurement, are treated categorically rather than continuously. For continuous predictors, RM-ANCOVA would be utilized.
 * Although simpler, it's a general linear model that must meet certain assumptions, including linearity, normal distribution of error, independence of errors, and homogeneity of errors—some of which can be challenging to satisfy with longitudinal data.
-* Consider, for instance, if you work for Netflix and you conducted surveys once a month for three months to assess audience satisfaction with a new feature that suggests shows in different languages. Using RM-ANOVA, you would assume that the variance, or differences in how customers rate their satisfaction, should be equal across the three time points. To elaborate further, you're assuming that the variability in satisfaction ratings—the extent to which people's opinions differ from one another—is consistent across all time points. Additionally, you expect that the relationship between consecutive satisfaction ratings remains stable over time.
-* This means you anticipate that if there is a broad range of opinions in the first month, a similar range will be observed in the second and third months. Similarly, if someone highly appreciated the feature in the first month, it's expected that they will continue to like it in subsequent months, indicating a consistent relationship over time.
-* However, this assumption often does not align with reality, as people's opinions can evolve based on various factors, and individuals may have distinct average ratings over time. It is, therefore, somewhat unrealistic to presume that everyone would begin with the same opinion and alter their attitudes or behaviors at an identical pace as time progresses.
+* Consider, for instance, if you work for Netflix and you conducted surveys once a month for three months to assess audience satisfaction with a new feature that suggests shows in different languages. Using RM-ANOVA, you expect that the relationship between consecutive satisfaction ratings remains stable over time. This means you anticipate that if there is a broad range of opinions in the first month, a similar range will be observed in the second and third months. Similarly, if someone highly disliked the feature in the first month, it's expected that they will continue to dislike it in subsequent months, indicating a consistent relationship over time (see the figure below).
+
+
+<img width="662" alt="Screen Shot 2024-01-25 at 3 15 01 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/99258c9b-d486-4d36-8b3c-38a99254b7e7">
+
+* According to the data above, you can see that most users start with similar satisfaction scores, ranging from approximately 4.8 to 6.2, and then follow a consistent individual pattern over time with a small random fluctuations. Only a few users have the patterns that are inconsistent with others.
+* However, this assumption often does not align with reality, as people's opinions can evolve based on various factors, and individuals may have distinct average ratings over time (see the figure below).
+
+<img width="665" alt="Screen Shot 2024-01-25 at 3 19 45 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/1546b44a-9eac-4f54-81f5-d3c32ffe01ce">
+
+
+*     It is, therefore, somewhat unrealistic to presume that everyone would begin with the same opinion and alter their attitudes or behaviors at an identical pace as time progresses.
 * RM-ANOVA also struggles with missing data, as it employs ordinary least squares. If a user misses a survey, their data is excluded from the analysis.
 * Best used for designs with few time points, such as a pre-post design, since only two data points may not adequately capture individual changes over time.
 * To learn more about how F statistics for multilevel modeling are calculated, I found [this article](https://statistics.laerd.com/statistical-guides/repeated-measures-anova-statistical-guide.php) very helpful.
