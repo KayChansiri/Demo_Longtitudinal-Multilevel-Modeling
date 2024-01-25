@@ -39,26 +39,26 @@ Before we get started, let’s discuss the differences between RM-ANOVA and Long
 * Can be categorized into general linear mixed models, assuming a normal distribution of errors, or generalized linear mixed models, which do not assume this and can handle categorical outcomes. These models allow for various forms of change over timem including non-linear relationships.
 * Handles missing data more effectively than RM-ANOVA by using residual (or restricted) maximum likelihood (REML) for continuous outcomes or maximum likelihood for categorical outcomes, instead of ordinary least squares, which is utilized by RM-ANOVA. Both REML and ML account for non-independence and potential heteroscedasticity and autocorrelation of residuals.
 * MLM relies on t-test statistics (or z-test if we standardize the scores of variables). Keep in mind that the degrees of freedom depend on the level of the predictor.
-* For Level 1 (Within-Subject Level), the degrees of freedom are typically based on the number of observations within each subject minus the number of parameters estimated at this level. For example, in the Netflix example, if you have three repeated measurements from the same subject and are estimating a slope and an intercept for each subject, the df for each subject would be three minus two.
-* For Level 2 (Between-Subject Level), the degrees of freedom are generally determined by the number of groups or subjects minus the number of parameters estimated at this level. For example, if you have 50 subjects and are estimating a random intercept for each, your df at Level 2 would be 50 minus the number of parameters (such as random effects) you are estimating for the groups/subjects.
+* For Level 1 (Within-Subject Level), the degrees of freedom are typically based on the number of observations within each subject minus the number of parameters estimated at this level. For example, in the Netflix example, if you have three repeated measurements from the same user and are estimating a slope and an intercept for each user, the df for each user would be three minus two.
+* For Level 2 (Between-Subject Level), the degrees of freedom are generally determined by the number of groups or subjects minus the number of parameters estimated at this level. For example, if you have 50 Netflix users and are estimating a random intercept for each, your degrees of freedom at Level 2 would be 50 minus the number of parameters (such as random effects) you are estimating for the users.
 
 ## RM-ANOVA VS MLM Equations
 To better understand the differences between those two methods, Let's look at the equations for RM-ANOVA versus MLM using the Netflix example I discussed earlier:
 
 **RM-ANOVA Equation**:Y<sub>ij</sub> = μ + α<sub>i</sub> + β<sub>j</sub> + (αβ)<sub>ij</sub> +  ϵ<sub>ij</sub>
- * Y<sub>ij</sub> ​is the satisfaction score for subject i at time j.
+ * Y<sub>ij</sub> ​is the satisfaction score for time i of user j.
  *  μ is the overall mean satisfaction score.
- *   α<sub>i</sub> ​and β<sub>j</sub>represent the individual and time effects, respectively.
- *   (αβ)<sub>ij</sub> is the interaction effect.
+ *   α<sub>i</sub> ​and β<sub>j</sub>represent the time and user (i.e., individual) effects, respectively.
+ *   (αβ)<sub>ij</sub> is the interaction effect of time and users.
  *    ϵ<sub>ij</sub>​is the error term, assumed to be equally correlated across all observations.
 
 **MLM Equation**:Y<sub>ij</sub>= γ<sub>00</sub>+γ<sub>10</sub>×Time<sub>ij</sub>+u<sub>0i</sub>+u<sub>1i</sub>×Time<sub>ij</sub>+ϵ<sub>ij</sub>
-  * Y<sub>ij</sub>​ is the satisfaction score for subject i at time j.
+  * Y<sub>ij</sub>​ is the satisfaction score at time i of subject j.
   * γ<sub>00</sub> and γ<sub>10</sub>are the fixed effects for the intercept and time, respectively.
   *  u<sub>0i</sub> and u<sub>1i</sub> ​are the random intercept and slope, respectively, capturing individual differences.
   *  ϵ<sub>ij</sub> ​is the unique error term for each observation.
 
-Note that the error terms in these models differ significantly. MLM accommodates individual variances in satisfaction scores and the interplay between time and satisfaction across individuals. In contrast, RM-ANOVA employs a singular error term (ϵ<sub>ij</sub>), which captures the discrepancy between predicted and observed values for individual i at time j. Neglecting hierarchical structures in data can lead to underestimating the standard errors of regression coefficients, potentially exaggerating the statistical significance of results, known as Type I error rates. This issue frequently arises in single-level regression applied to clustered data. While RM-ANOVA addresses this to some degree by incorporating αβ<sub>ij</sub>, it has limitations such as reduced flexibility in managing missing data and not accounting for variations in intercepts and slopes across groups. Consequently, MLM is generally regarded as superior in minimizing error terms.
+Note that the error terms in these models differ significantly. MLM accommodates individual variances in satisfaction scores (i.e., random intercept) and the interplay between time and satisfaction across individuals (i.e., random slope). In contrast, RM-ANOVA employs a singular error term (ϵ<sub>ij</sub>), which captures the discrepancy between predicted and observed values for individual j at time i. Neglecting random effects in data can lead to underestimating the standard errors of regression coefficients, potentially exaggerating the statistical significance of results, known as Type I error rates. Despite incorporating αβ<sub>ij</sub>, RM-ANOVA has limited flexibility in managing missing data and does not account for variations in intercepts and slopes across groups. Consequently, MLM is generally regarded as superior in minimizing error terms when it comes to longitudinal data.
 
 # MLM Terminologies
 
