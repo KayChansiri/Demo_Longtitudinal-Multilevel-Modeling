@@ -243,7 +243,7 @@ Here is the output:
 * According to the output,the variance in the intercept across different subjects (`subject_id`) is 0.0174, with a standard deviation of 0.1319. This suggests some variability in the baseline satisfaction scores among different Netflix users.The residual variance is 1.9141 with a standard deviation of 1.3835, indicating the variability in satisfaction scores within subjects that is not explained by the time variable.
 * Regarding the fixed Effects, the intercept (3.22000) represents the average satisfaction score at the reference level of the `time_numeric` variable (i.e., month 1). The coefficient for `time_numeric` is -0.11000. This suggests that, on average, satisfaction scores decrease slightly as the `time_numeric` variable increases. The negative sign indicates an inverse relationship. However, the t-value of -1.124, which  is quit small,  suggest that this effect is not statistically significant. Tis is consistent with our previous model indicating the non-significance effects of time.
 * The correlation of -0.924 between the intercept and `time_numeric` reflects a strong inverse relationship, given that correlation scores range from -1 to 1. This implies that an increase in the `time_numeric` variable is generally associated with a decrease in the average satisfaction score, and vice versa. However, this zero-order correlation doesn't consider other variances/residuals that might influence the relationship between time and satisfaction scores. This explains the high correlation coefficient, despite the non-significant effect of time observed in our regression models.
-* The REML criterion at convergence (1052.8) is a measure of the model fit. Lower values generally indicate a better fit, but this metric is more useful for comparing different models on the same data. Let's compare this random intercept model with the fixed model we previously ran, using BIC and AIC.
+* Notice the output is a linear mixed model fitted using REML (Restricted/Residual Maximum Likelihood), which is The REML criterion at convergence (1052.8) is a measure of the model fit. Lower values generally indicate a better fit, but this metric is more useful for comparing different models on the same data. Let's compare this random intercept model with the fixed model we previously ran, using BIC and AIC.
 
 ```ruby
 AIC(level1_fixed_model)
@@ -390,16 +390,62 @@ summary(level1_fixed_model)
 
 <img width="555" alt="Screen Shot 2024-01-23 at 5 05 35 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/7cab70ff-a79d-451e-be29-ae66df6ea67d">
 
+According to the output, you can see that the fixed effect of time is significant, indicating that a one-unit increase in time (i.e., month) significantly predicts a 0.89 change in satisfaction scores.
 
 ### Random Intercept Model
 ```ruby
+random_intercept_model <- lmerTest::lmer(satisfaction ~ time_numeric + (1 | subject_id), data = longitudinal_data)
 
+# View the summary of the model
+summary(random_intercept_model)
 ```
 
 
+<img width="458" alt="Screen Shot 2024-01-25 at 12 39 23 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/d0498ca7-d6e1-4f4c-ae66-36bdd9282b1b">
+* Regarding random effects, the random intercept for each user with a variance of 3.148 and standard deviation of 1.774 implies individual differences among users' baseline satisfaction levels. For the residual variance (error variance) at 0.678 with a standard deviation of 0.8234, the numbers indicate the variation in satisfaction scores not explained by the model.
+* For fixed effects, the coefficient for 'time_numeric' is 0.89000 with a significant p-value indicates that for each unit increase in time, there's an expected increase of 0.89 in the satisfaction score.
+* For correlation of fixed effects, the correlation between the intercept and 'time_numeric' is -0.535, suggesting a moderate inverse relationship between these parameters within the model. In other words, if the intercept were higher (i.e., if the average satisfaction score at month 1 were higher), the effect of time on satisfaction (the slope) would tend to be lower, and vice versa. This means that users with initially high satisfaction scores might show less change over time compared to subjects with initially low scores.
 
-ICC
-BIC 
-CoVacc
+### Random Slope Model 
+
+```ruby
+random_slope_model <- lmerTest::lmer(satisfaction ~ time_numeric + (time_numeric | subject_id), data = longitudinal_data)
+
+# View the summary of the model
+summary(random_slope_model)
+```
+
+<img width="638" alt="Screen Shot 2024-01-25 at 1 07 00 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/9911fdc0-d1c8-42d9-8c7f-3d04be986e41">
+
+
+* Notice that we do not get the warning "boundary (singular) fit" anymore after we work with the new dataset that we purposefully make the random and fixed effects exist. In the real world, you stil may end up with the warning depending on the nature of the dataset you are working with.
+*  Accoridng to the output, the REML Criterion at Convergence (1001.7) indicates that the random slope model might provide a better fit than our previous model as lower values generally indicate a better fit. We will confirm this assumption again by checking the AIC and BIC values across models.
+*  The distribution of residuals range from range from -1.79912 to 1.94029, suggesting that there are no extreme outliers in the model's predictions as the deviation between predicted and observed values are not that high.
+*  Regarding random effects, the random intercept variance is 2.35461 with a standard deviation of 1.5345, indicating variation in the baseline satisfaction levels across users. The variance of the random slope for time is 0.06494 with a standard deviation of 0.2548 indicates variability in how satisfaction changes over time across users, although the variation is likely small as the variance is only 0.06.
+*  The correlation between the random intercept and random slope is 0.35, suggesting a moderate positive relationship. This implies users with a higher baseline satisfaction tend to have a different rate of change in satisfaction over time compared to those with a lower baseline satisfaction.
+*  The residual variance is 0.61335 with a standard deviation of 0.7832, indicating the variation in satisfaction scores not explained by the model.
+*  Regarding fixed effects, the effect of time on satisfaction is estimated at 0.89000 with a significant p-value, suggesting that satisfaction changes significantly over time.
+*  The correlation of -0.400 between the intercept and time_numeric suggests a moderate inverse relationship between these two estimates in the model as mentioned in the previous model.
+*  Now let's compare the model fit. This time I will use anova() to compare the fit. However, keep in mind that the function would work if two models are built upon the same function. For example, in the current context, both random_intercept_model and random_slope_model are built on the lmerTest::lmer and therefore can be compared by the anova() function. However, if you compare the level1_fixed_model, which was built on the lm() function with the  random_intercept_model, which was built on the lmer() function, the anova comparison would not work.
+
+## Model Fit Comparison
+
+```ruby
+anova(random_intercept_model, random_slope_model)
+```
+<img width="598" alt="Screen Shot 2024-01-25 at 2 02 08 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/6231d724-42aa-4303-b9b2-b1ee9ba75932">
+
+* The interpretation of the output is a bit more nuanced. For both BIC and AIC, lower values indicate a better fit. For the BIC values, the `random_intercept_model` has a lower BIC (1025.9) compared to the `random_slope_model` (1030.6), suggesting that  the simpler `random_intercept_model` might be more appropriate. However,the `random_slope_model` has a lower AIC than the `random_intercept_model` , suggesting it might provide a better fit when considering model complexity.
+* When AIC and BIC point in different directions, it's important to consider some other evidence such as log-likelihood or previous empirical studies to see whether user satisfaction of a streaming service likely vary across individuals over time  to inform whether we should include the random slope parameter.  Deciding between the models also depend on the specific goals of your analysis and the nature of each project that you are working with.
+* logLik (Log-Likelihood) is another model fit parameter. Higher values indicate better fit. According to the output, the random_slope_model has a higher log-likelihood (-498.17) than the random_intercept_model (-501.55). The results are consistent woth the AIC value.
+* Regarding deviance, lower values are better. Thus, a lower deviance for the random_slope_model (996.34) compared to the random_intercept_model (1003.09) indicates a better fit.
+* Thechi-squared statistic (6.7546) indicates a significant p-value (0.03414), suggesting that the model with more parameters (random_slope_model) provides a significantly better fit to the data.
+* In summary, the random_slope_model provides a statistically significantly better fit to the data than the random_intercept_model, as indicated by the lower AIC and higher log-likelihood values and the significant result in the chi-squared test. This suggests that allowing the effect of time on satisfaction to vary across users (random slope) is important in modeling these data. Let's check ICC to see whether our assumption regarding adding the random effects could improve the model fit is likely true.
+
+## ICC
+
+
+
+CoVacc Power analysis  
 
 
