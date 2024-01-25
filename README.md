@@ -7,7 +7,7 @@ In today's post, we're going to pivot from our usual focus on machine learning a
 
 Before we get started, let’s discuss the differences between RM-ANOVA and Longitudinal MLM (also known as Hierarchical Linear Modeling, Mixed Modeling).
 
-## Repeated Measures ANOVA
+## RM-ANOVA
 
 * Simpler than MLM, this method is used to detect changes across time points and conditions (e.g., control vs. treatment). The analysis emphasizes whether a main effect of time or a time*treatment interaction exists.
 * However, the model does not necessarily consider differences across individuals—such as whether different people have different baselines or if their responses to a predictor vary over time.
