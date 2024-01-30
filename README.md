@@ -64,8 +64,8 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
 
 ## 2. Random Effects
 * Random effects account for variations across units, allowing individual uniqueness. They are divided into random slopes and random intercepts.
-* A random intercept in the Netflix scenario acknowledges that different users might have varying baseline satisfaction levels.
-* A random slope indicates that the impact of month of measurement on satisfaction differs among users. For some, a month goes by might significantly boost satisfaction, while for others, the effect could be minimal.
+* The random intercept in the Netflix scenario acknowledges that different users might have varying baseline satisfaction levels.
+* The random slope indicates that the impact of month of measurement on satisfaction differs among users. For some, a month goes by might significantly boost satisfaction, while for others, the effect could be minimal or even occur in the opposite direction.
 * Considering these concepts of fixed versus random effects, think about the potential research questions in your projects. Using the Netflix example, you could explore:
   * Time-varying factors (like age or survey wave) influencing customer satisfaction.
   * The impact of personal attributes (gender, race, etc.) on satisfaction.
@@ -75,10 +75,10 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
 > Remember, the heart of your analysis lies in framing the right questions and constructing an accurate model. Running the model is comparatively straightforward.
 
 ## 3. Levels in MLM
-* MLM always involves multiple levels. In longitudinal data, Level 1 often represents time or time-varying variables, while Level 2 captures individual differences with time-invariant factors like race, gender, or other demographic characteristics that do not change across time.
+* MLM always involves multiple levels. In longitudinal data, Level 1 often represents time or time-varying variables (e.g., age or anything that could change over time), while Level 2 captures individual differences with time-invariant factors like race, gender, or other demographic characteristics that do not change across time points.
 
 ## 4. Residuals vs. Random Effects
-* We often refer to Level 2 error terms as 'random effects' and Level 1 error terms as 'residuals.'
+* We often refer to Level 2 error terms as 'random effects' and Level 1 error terms as 'residuals.' Remember that these two are different. Random effects assess the variation across subjects/groups or the Level 2 categories. Residuals, on the other hand, represent any other variance not explained by the predictors in the model.
 
 ## 5. Balanced vs. Imbalanced Designs
 * In longitudinal MLM, when every subject has the same interval between measurements, for example, every six months,the design is considered balanced as everyone is measured on the same schedule.
@@ -95,11 +95,11 @@ Now that we've explored how MLM offers a more nuanced approach than RM-ANOVA, pa
 
 $$\text{ICC} = \frac{\tau_{00}}{\tau_{00} + \sigma^2}\$$
 
-* ICC values range from 0 to 1. Higher values, approaching 1, indicate that a significant portion of the total variance is due to differences between groups. For instance, an ICC of 1 suggests that the data aligns closely with longitudinal modeling, implying no observable change over time within subjects; instead, the variance is predominantly driven by differences between subjects. This scenario signifies that the data is not representative of clustered longitudinal patterns.
+* ICC values range from 0 to 1. Higher values, approaching 1, indicate that a significant portion of the total variance is due to differences between groups. For instance, an ICC of 1 suggests that the data has NO observable change over time within subjects; instead, the variance is predominantly driven by differences between subjects. This scenario signifies that the data is not representative of clustered longitudinal patterns.
 * Conversely, an ICC close to 0, or exactly 0, indicates that time effects are highly individualized, with each person demonstrating distinct responses over time. This scenario suggests a minimal influence of group-level factors.
 * In most cases, the ICC will fall somewhere between 0 and 1. It's important to recognize ICC as a form of effect size, offering valuable insight into the relative impact of within-group versus between-group variability in your data.
 ## 8. Covariance 
-* Covariance refers to the measure of how much two random variables change together. In the context of MLM, you often deal with random effects at different levels (like random intercepts and slopes), and the covariance between these effects can be informative.
+* Covariance refers to the measure of how much two random variables change together. In the context of MLM, you often deal with different types of random effects (like random intercepts and slopes), and the covariance between these effects can be informative.
 * In our example, time is nested within Netflix users. You might be interested in the covariance between the random intercept  and the random slope of time acorss users. This would tell you how much the average satisfaction scores (intercept) and the effect of time (slope) co-vary across users.
 * A positive covariance would suggest that users with higher intercepts (e.g., folks with overall higher satisfaction scores) also have higher slopes (e.g., a stronger effect of time change on satisfaction scores). A negative covariance would indicate an inverse relationship.
 ## 9. Correlation
@@ -110,7 +110,7 @@ $$\text{ICC} = \frac{\tau_{00}}{\tau_{00} + \sigma^2}\$$
 
 Multilevel modeling utilizes specific subscript notation to denote levels and parameters within the model. This notation typically follows a pattern:
 * **i**: Indicates the lower-level unit (e.g., time point in longitudinal studies, students in cross-sectional educational research, etc.).
-*  **j**: Represents the higher-level unit in models with more than two levels (e.g., classrooms, schools). In longitudinal multilevel modeling, 'i' often denotes individuals, while 'j' denotes time points. Therefore, a subscript 'ij' refers to individual 'i' at time 'j'.
+*  **j**: Represents the higher-level unit in models with more than one levels (e.g., classrooms, schools). In longitudinal multilevel modeling, 'i' often denotes time points, while 'j' denotes individuals. Therefore, a subscript 'ij' refers to individual 'j' at time 'i.' However, some scholars may prefer to write it in reverse, as in a cross-sectional MLM, 'i' often refers to individuals. Consequently, some longitudinal MLM studies refer to 'ij' as time 'j' of individual 'i'.
 *   **0, 1, 2, …, n**: These numbers as subscripts represent the indices of predictors in the model. '0' refers to the intercept; '1' to the first variable; '2' to the second variable, and so on. In cases where there is more than one number in a subscript, the first number typically denotes the order of predictors at Level 1, and the second refers to the order of predictors at Level 2. For instance:
     * γ<sub>01</sub> represents the effect of the first Level 2 predictor on the Level 1 intercept.
     * γ<sub>11</sub> indicates the effect of the first Level 2 predictor on the slope of the first Level 1 predictor.
@@ -122,7 +122,7 @@ Understanding the notations in Multilevel Modeling (MLM) for longitudinal data c
 
 <img width="774" alt="Screen Shot 2024-01-19 at 11 00 39 AM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/b0ac34ca-ce15-4216-96ee-7ef1fbf5f698">
 
-The subsequent stage involves incorporating fixed effects, or time-varying variables, at Level 1. The objective here is to determine whether the addition of these variables offers a significant enhancement over the null model. Should this be the case, we proceed to the introduction of a random intercept term at Level 2. This addition aims to explore the variability in average outcomes across different individuals.
+The subsequent stage involves incorporating fixed effects, or time-varying variables, at Level 1. The objective here is to determine whether the addition of these variables offers a significant enhancement over the null model (i.e., the model with only the intercept term without any other predictors). Should this be the case, we proceed to the introduction of a random intercept term at Level 2. This addition aims to explore the variability in average outcomes across different individuals.
 
 When the inclusion of the random intercept term significantly augments the model's fit compared to the fixed-effects-only model, it signals the appropriateness of integrating a random slope term. This term enables us to examine the diversity in the relationships between predictors and outcomes across different subjects.
 
@@ -131,7 +131,7 @@ In scenarios involving multiple time-varying predictors at Level 1, each is adde
 **Throughout this modeling process, one aspect is varied at a time, facilitating a comparative analysis with the preceding model iteration to confirm improvements in model fit. Key statistical measures like the Likelihood Ratio Test (LRT), Akaike Information Criterion (AIC), and Bayesian Information Criterion (BIC) serve as valuable tools in this assessment.**
 
 ## 1. Null Model
-To provide a practical perspective on model building and evaluation, let’s delve into this methodology using a Netflix case study as an illustrative example. To set the stage for our exploration, I'll begin by creating a simulated dataset and start with the null or fixed intercept only model.
+To provide a practical perspective on model building and evaluation, let’s delve into this methodology using the Netflix fake study above as an illustrative example. To set the stage for our exploration, I'll begin by creating a simulated dataset and start with the null or fixed intercept only model.
 ```ruby
 set.seed(123)  # Set seed for reproducibility
 
@@ -168,7 +168,7 @@ head(longitudinal_data, 10)
 
 According to the dataset, we have 100 Netflix users, each of whom was measured for their satisfaction with a new feature three times (months 1, 2, and 3). This setup represents a balanced MLM (Multilevel Modeling) design. The satisfaction score of the Netflix user, which ranges from 1 to 5, is randomly generated for each time point. Additionally, a measure of the user's engagement, randomly chosen between 1 and 100, is recorded at each time point. Both gender and income serve as fixed effects, meaning their values remain constant across all time points for each subject.
 
-The equation of the  null model is Y<sub>ij</sub> = γ<sub>0i</sub> +ϵ<sub>ij</sub>. To fil the model in R according to the equation, we write the following code: 
+The equation of the  null model is Y<sub>ij</sub> = β<sub>0i</sub> +ϵ<sub>ij</sub>. To fil the model in R according to the equation, we write the following code: 
 ​
 ```ruby
 # Load the necessary library
@@ -188,15 +188,15 @@ According to the output, the average satisfaction score across all subjects and 
 
 ## 2. Fixed Slope Model
 
-Let's build a bit more complicated model by adding the time of measuredment, which reflects the months when each user's satisfaction was assessed, as another fixed effect in the model.
+Let's build a bit more complicated model by adding the time of measurement, which reflects the months when each user's satisfaction was assessed, as a fixed effect in the model.
 
-satisfaction<sub>ij</sub>​= π<sub>0i</sub>​ + π<sub>1i</sub>​(time)+ ϵ<sub>ij</sub>​ 
+satisfaction<sub>ij</sub>​= β<sub>0j</sub>​ + β<sub>1j</sub>​(time)+ ϵ<sub>ij</sub>​ 
 
-* satisfaction<sub>ij</sub>: This denotes the satisfaction score of user i at time j.
-* π<sub>0i</sub>: The intercept for individual i. This value predicts the expected satisfaction score for user i at the baseline time point, which, in our case, is month 1.
-* π<sub>1i</sub>​(time): The slope of time for user i. This coefficient indicates the extent of change in satisfaction scores for user i with each incremental month.
-Time: This is a key variable indicating the time point of measurement — month 1, 2, or 3. In different studies, time-varying variables might vary and could include factors like age, years, or other temporal measures relevant to your specific research project.
-ϵ<sub>ij</sub>​: The residual error for individual i at time j. It represents the portion of satisfaction variation that remains unexplained even after considering the time effect.
+* satisfaction<sub>ij</sub>: This denotes the satisfaction score of user j at time i.
+* β<sub>0j</sub>: This is the random intercept for individual j, representing the expected satisfaction score for individual j when time is at its reference point (i.e., month 1).
+* β<sub>1j</sub>​(time): This denotes the slope of the time predictor for individual j, indicating how much their satisfaction is expected to change with each time increment (usually assuming time is measured continuously).
+* Time: This is a key variable indicating the time point of measurement — month 1, 2, or 3. In different studies, time-varying variables might vary and could include factors like age, years, or other temporal measures relevant to your specific research project.
+* ϵ<sub>ij</sub>​: The residual error for individual j at time i. It represents the portion of satisfaction variation that remains unexplained even after considering the time effect.
 
 Let's fit the model in R.
 
@@ -220,15 +220,15 @@ Notice that the effects of time is not significant. In this case, I do not need 
 
 ## 3. Random Intercept model
 Let's construct a more complex model to investigate whether the average satisfaction score among Netflix users varies.
-### Level-1 Equation (Within-Subject Model):satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>×time_numeric<sub>ij</sub>+e<sub>ij</sub>
+### Level-1 Equation (Within-Subject Model): Satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>time_numeric<sub>ij</sub>+ϵ<sub>ij</sub>
 
-* satisfaction<sub>ij</sub> is the satisfaction score for the j measurement of the i subject
-* β<sub>0j</sub> is the subject-specific intercept for the i user
-*  β<sub>1</sub>  s the fixed effect of time (time_numeric), representing the average change in satisfaction score for a unit increase in time.
-*  e<sub>ij</sub> is the residual error for the j-th measurement of the i-th user.
-### Level-2 Equation (Between-Subject Model): β<sub>0j</sub> =  β<sub>00</sub> + u<sub>0j</sub>
-* β<sub>00</sub> is the overall average intercept across all subjects.
-* u<sub>0j</sub> is the random effect for the i user, representing the deviation of the user’s intercept from the overall average intercept.
+* satisfaction<sub>ij</sub> is the satisfaction score for the i measurement of the j subject
+* β<sub>0j</sub> is the subject-specific intercept for the j user. It represents the expected satisfaction score for subject j at month 1.
+*  β<sub>1</sub>  is the fixed effect of time (time_numeric), representing the average change in satisfaction score for a unit increase in time.
+*  e<sub>ij</sub> is the residual error for the i measurement of the j user.
+### Level-2 Equation (Between-Subject Model): β<sub>0j</sub> =  γ<sub>00</sub> + u<sub>0j</sub>
+* γ<sub>00</sub> is the overall average intercept across all subjects.
+* u<sub>0j</sub> is the random effect for the j user, representing the deviation of the user’s intercept from the overall average intercept.
 
 Let's build the model in R:
 ```ruby
@@ -243,7 +243,7 @@ Here is the output:
 <img width="443" alt="Screen Shot 2024-01-22 at 1 04 49 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/88ffcfd0-e6e7-4cd8-a024-d9a4a63ea0ec">
 
 
-* According to the output,the variance in the intercept across different subjects (`subject_id`) is 0.0174, with a standard deviation of 0.1319. This suggests some variability in the baseline satisfaction scores among different Netflix users.The residual variance is 1.9141 with a standard deviation of 1.3835, indicating the variability in satisfaction scores within subjects that is not explained by the time variable.
+* According to the output,the variance in the intercept across different users (`subject_id`) is 0.0174, with a standard deviation of 0.1319. This suggests some variability in the baseline satisfaction scores among different Netflix users.The residual variance is 1.9141 with a standard deviation of 1.3835, indicating the variability in satisfaction scores that is not explained by the time variable.
 * Regarding the fixed Effects, the intercept (3.22000) represents the average satisfaction score at the reference level of the `time_numeric` variable (i.e., month 1). The coefficient for `time_numeric` is -0.11000. This suggests that, on average, satisfaction scores decrease slightly as the `time_numeric` variable increases. The negative sign indicates an inverse relationship. However, the t-value of -1.124, which  is quit small,  suggest that this effect is not statistically significant. Tis is consistent with our previous model indicating the non-significance effects of time.
 * The correlation of -0.924 between the intercept and `time_numeric` reflects a strong inverse relationship, given that correlation scores range from -1 to 1. This implies that an increase in the `time_numeric` variable is generally associated with a decrease in the average satisfaction score, and vice versa. However, this zero-order correlation doesn't consider other variances/residuals that might influence the relationship between time and satisfaction scores. This explains the high correlation coefficient, despite the non-significant effect of time observed in our regression models.
 * Notice the output is a linear mixed model fitted using REML (Restricted/Residual Maximum Likelihood), which is The REML criterion at convergence (1052.8) is a measure of the model fit. Lower values generally indicate a better fit, but this metric is more useful for comparing different models on the same data. Let's compare this random intercept model with the fixed model we previously ran, using BIC and AIC.
@@ -292,15 +292,15 @@ In addition to identifying the random effects for each case in the dataset using
 
 ## 4. Random Slope Model 
 Although the previous model suggests that including a random intercept term may not significantly improve the model, let's assume it does for the sake of continuing our model testing process. In this step, I'll include a random slope for time to explore if different users exhibit varying satisfaction levels as time progresses. To address the research question, we can formulate the following equations:
-### ### Level-1 Equation (Within-Subject Model):satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1</sub>×time_numeric<sub>ij</sub>+e<sub>ij</sub>
-* satisfaction<sub>ij</sub> is the satisfaction score for the i measurement of the j user
-* β<sub>0j</sub> is the subject-specific intercept for the j user
-*  β<sub>1</sub>  s the fixed effect of time (time_numeric), representing the average change in satisfaction score for a unit increase in time.
-*  e<sub>ij</sub> is the residual error for the j-th measurement of the i-th user.
+### Level-1 Equation (Within-Subject Model): Satisfaction<sub>ij</sub> = β<sub>0j</sub> + β<sub>1j</sub>time_numeric<sub>ij</sub>+e<sub>ij</sub>
+* satisfaction<sub>ij</sub> is the satisfaction score for the i measurement of the j user.
+* β<sub>0j</sub> is the subject-specific intercept for the j user.
+*  β<sub>1j</sub> is the effect of time (time_numeric), representing the average change in satisfaction score for a unit increase in time.
+*  e<sub>ij</sub> is the residual error for the j measurement of the i user.
 ### Level-2 Equation (Between-Subject Model/Random Intercept): β<sub>0j</sub> =  γ<sub>00</sub> + u<sub>0j</sub>
 * β<sub>00</sub> is the overall average intercept across all subjects.
-* u<sub>0j</sub> is the random effect for the i user, representing the deviation of the user’s intercept from the overall average intercept.
-### Level-2 Equation (Between-Subject Model/Random Slope): β<sub>1</sub>×time_numeric<sub>ij</sub> =  γ<sub>01</sub> + u<sub>1j</sub>
+* u<sub>0j</sub> is the random effect for the j user, representing the deviation of the user’s intercept from the overall average intercept.
+### Level-2 Equation (Between-Subject Model/Random Slope): β<sub>1j</sub>=  γ<sub>01</sub> + u<sub>1j</sub>
 * γ<sub>01</sub> is the overall average slope (effect of time) across all users.
 * u<sub>1j</sub> is are the random effects capturing the deviation of the j<sup>th</sup> user's intercept and slope from the overall averages, respectively. Let's program this in R.
 
