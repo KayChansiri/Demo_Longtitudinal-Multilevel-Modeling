@@ -3,44 +3,37 @@ In today's post, we're going to pivot from our usual focus on machine learning a
 
 **The most important aspect of multilevel modeling is understanding how to construct an equation and interpret the model. You don’t have to worry too much about coding; it’s quite straightforward whether you are an R or Python user.** 
 
-# Repeated Measures ANOVA (RM-ANOVA)Versus Longitudinal Multilevel Modeling (MLM) 
+# Repeated Measures ANOVA (RM-ANOVA) Versus Longitudinal Multilevel Modeling (MLM) 
 
 Before we get started, let’s discuss the differences between RM-ANOVA and Longitudinal MLM (also known as Hierarchical Linear Modeling, Mixed Modeling).
 
 ## RM-ANOVA
 
-* Simpler than MLM, this method is used to detect changes across time points and conditions (e.g., control vs. treatment). The analysis emphasizes whether a main effect of time or a time*treatment interaction exists.
+* RM-ANOVA is simpler than MLM. The analysis simply explores whether a main effect of time or a time*treatment interaction exists. With its simplicity, RM-ANOVA is best used for designs with few time points, such as a pre-post design.
 * However, the model does not necessarily consider differences across individuals—such as whether different people have different baselines or if their responses to a predictor vary over time.
-* Appropriate when all cases have the same number of data waves, meaning each case is measured the same number of times, and the intervals between measurements are equal.
-* Predominantly used for discrete/categorical predictors.
-* Time-varying variables, like the wave of measurement, are treated categorically rather than continuously. For continuous predictors, RM-ANCOVA would be utilized.
-* Although simpler, it's a general linear model that must meet certain assumptions, including linearity, normal distribution of error, independence of errors, and homogeneity of errors—some of which can be challenging to satisfy with longitudinal data.
-* Consider, for instance, if you work for Netflix and you conducted surveys once a month for three months to assess audience satisfaction with a new feature that suggests shows in different languages. Using RM-ANOVA, you expect that the relationship between consecutive satisfaction ratings remains stable over time. This means you anticipate that if there is a broad range of opinions in the first month, a similar range will be observed in the second and third months. Similarly, if someone highly disliked the feature in the first month, it's expected that they will continue to dislike it in subsequent months, indicating a consistent relationship over time (see the figure below).
+* RM-ANOVA is appropriate when all cases have the same number of data waves, meaning each case is measured the same number of times, and the intervals between measurements are equal.
+* The analysis technique is predominantly used for discrete/categorical predictors. Time-varying variables, such as the wave of measurement, are treated categorically rather. Thus, if you wish to measure growth as a continuum over time, RM-ANOVA might not be a good option. If you have any continuous predictors in your model or would like to measure growth, Growth Curve Models, a specific type of MLM, should be utilized.
+* RM-ANOVA must meet certain general linear model assumptions, including normal distribution of errors, independence of errors, and homogeneity of errors—some of which can be challenging to satisfy with longitudinal data.
+* For instance, if you work for Netflix and you conducted surveys once a month for three months to assess user satisfaction with a new feature. Using RM-ANOVA, you expect that the relationship between consecutive satisfaction ratings remains stable over time. This means you anticipate that if there is a broad range of opinions in the first month, a similar range will be observed in the second and third months. Similarly, if someone highly disliked the feature in the first month, it's expected that they will continue to dislike it in subsequent months.
+  
+![Unknown](https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/508e1b72-fee1-4a88-8d01-1e49358111ba)
 
-
-<img width="656" alt="Screen Shot 2024-01-25 at 3 20 55 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/7a049a4a-9924-40f4-a0a6-d51ecfc1030a">
-
-* According to the data above, you can see that most users start with similar satisfaction scores, ranging from approximately 4.8 to 6.2, and then follow a consistent individual pattern over time with a small random fluctuations. Only a few users have the patterns that are inconsistent with others.
-* However, this assumption often does not align with reality, as people's opinions can evolve based on various factors, and individuals may have distinct average ratings over time (see the figure below).
+* According to the plot above, all users start with similar satisfaction scores and follow a consistent pattern over time, which is an assumption that needs to be met for RM-ANOVA. However, this assumption often does not align with reality, since people's opinions are likely to vary at the baseline and may evolve differently over time. The figure below likely better reflects real-world data.
 
 <img width="653" alt="Screen Shot 2024-01-25 at 3 21 50 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/aef632d2-ab38-4678-ac06-ba6c680e66a0">
 
+* RM-ANOVA also struggles with missing data mangagement, as it employs ordinary least squares. If a user misses one out of the three wave survey, their data is excluded from the analysis as the algorithm cannot calculate the distance between observed versus predicted values of that user during a specific timepoint.
 
-* It is, therefore, somewhat unrealistic to presume that everyone would begin with the same opinion and alter their attitudes or behaviors at an identical pace as time progresses.
-* RM-ANOVA also struggles with missing data, as it employs ordinary least squares. If a user misses a survey, their data is excluded from the analysis.
-* Best used for designs with few time points, such as a pre-post design, since only two data points may not adequately capture individual changes over time to be analyzed by MLM.
-* To learn more about how F statistics for RM-ANOVA are calculated, I found [this article](https://statistics.laerd.com/statistical-guides/repeated-measures-anova-statistical-guide.php) very helpful.
 
 ## MLM
 
-* More complex than RM-ANOV -- this approach captures random effects, including differences in average outcomes (random intercepts) and variations in how predictors relate to outcomes (random slopes) across subjects.
-* More flexible than RM-ANOVA, as cases do not need to have the same number of time points or intervals. Note that more data waves are advantageous for capturing changes over time in MLM. At least three time points per subject is recommended.
-* Can accommodate both categorical and continuous predictors.
-* Can be categorized into general linear mixed models, assuming a normal distribution of errors, or generalized linear mixed models, which do not assume this and can handle categorical outcomes. These models allow for various forms of change over timem including non-linear relationships.
-* Handles missing data more effectively than RM-ANOVA by using residual (or restricted) maximum likelihood (REML) for continuous outcomes or maximum likelihood for categorical outcomes, instead of ordinary least squares, which is utilized by RM-ANOVA. Both REML and ML account for non-independence and potential heteroscedasticity and autocorrelation of residuals.
-* MLM relies on t-test statistics (or z-test if we standardize the scores of variables). Keep in mind that the degrees of freedom depend on the level of the predictor.
-* For Level 1 (Within-Subject Level), the degrees of freedom are typically based on the number of observations within each subject minus the number of parameters estimated at this level. For example, in the Netflix example, if you have three repeated measurements from the same user and are estimating a slope and an intercept for each user, the df for each user would be three minus two.
-* For Level 2 (Between-Subject Level), the degrees of freedom are generally determined by the number of groups or subjects minus the number of parameters estimated at this level. For example, if you have 50 Netflix users and are estimating a random intercept for each, your degrees of freedom at Level 2 would be 50 minus the number of parameters (such as random effects) you are estimating for the users.
+* MLM is more complex than RM-ANOV. The approach captures random effects, including differences in average outcomes (random intercepts) and variations in how predictors relate to outcomes (random slopes) across subjects.
+* MLM is more flexible than RM-ANOVA, as cases do not need to have the same number of time points or intervals. However, note that more data waves are advantageous for capturing changes over time in MLM. At least three time points per subject is recommended.
+* MLM can accommodate both categorical and continuous predictors. Thus, you can use the analysis technique to assess growth.
+* With a continuous outcome, MLM is considered a general linear mixed model that assumes a normal distribution of errors. With a categorical or binary outcome, MLM is considered a generalized linear mixed model, which does not assume a normal distribution of errors and allows for various forms of change over time, including non-linear relationships
+* MLM handles missing data more effectively than RM-ANOVA by using residual (or restricted) maximum likelihood (REML) for continuous outcomes or maximum likelihood for categorical outcomes, instead of ordinary least squares. Both REML and ML account for non-independence and potential heteroscedasticity and autocorrelation of residuals.
+* MLM relies on t-test statistics (or z-test if we standardize the scores of variables). 
+* The degrees of freedom for MLM are calculated differently from those for RM-ANOVA, considering that the model addresses both within-subjects (often referred to as level 1 analysis) and between-subjects (often referred to as level 2 analysis) effects. For within-subject analysis, the degrees of freedom are based on the number of observations within each subject minus the number of parameters estimated at this level. For example, in the Netflix example, if you have three repeated measurements from the same user and are estimating a slope and an intercept for each user, the degrees of freedom for each user would be 3 - 2 (slope and intercept) = 1. For Level 2 (between-subject effects), the degrees of freedom are generally determined by the number of groups or subjects minus the number of parameters estimated at this level. For instance, if you have 50 Netflix users and are estimating a random intercept for each, your degrees of freedom at Level 2 would be 50 - 1 (i.e., the random intercept) = 49. The calculation of degrees of freedom for RM-ANOVA is beyond the scope of the current topic, but you can learn more about it [here](https://statistics.laerd.com/statistical-guides/repeated-measures-anova-statistical-guide.php).
 
 ## RM-ANOVA VS MLM Equations
 To better understand the differences between those two methods, Let's look at the equations for RM-ANOVA versus MLM using the Netflix example I discussed earlier:
@@ -50,15 +43,15 @@ To better understand the differences between those two methods, Let's look at th
  *  μ is the overall mean satisfaction score.
  *   α<sub>i</sub> ​and β<sub>j</sub>represent the time and user (i.e., individual) effects, respectively.
  *   (αβ)<sub>ij</sub> is the interaction effect of time and users.
- *    ϵ<sub>ij</sub>​is the error term, assumed to be equally correlated across all observations.
+ *    ϵ<sub>ij</sub> ​is the error term, assumed to be equally correlated across all observations.
 
-**MLM Equation**:Y<sub>ij</sub>= γ<sub>00</sub>+γ<sub>10</sub>×Time<sub>ij</sub>+u<sub>0i</sub>+u<sub>1i</sub>×Time<sub>ij</sub>+ϵ<sub>ij</sub>
+**MLM Equation**:Y<sub>ij</sub> = γ<sub>00</sub> + γ<sub>10</sub>×Time<sub>ij</sub> + u<sub>0i</sub> + u<sub>1i</sub>×Time<sub>ij</sub> + ϵ<sub>ij</sub>
   * Y<sub>ij</sub>​ is the satisfaction score at time i of subject j.
-  * γ<sub>00</sub> and γ<sub>10</sub>are the fixed effects for the intercept and time, respectively.
+  * γ<sub>00</sub> and γ<sub>10</sub> are the fixed effects for the intercept and time, respectively.
   *  u<sub>0i</sub> and u<sub>1i</sub> ​are the random intercept and slope, respectively, capturing individual differences.
-  *  ϵ<sub>ij</sub> ​is the unique error term for each observation.
+  *  ϵ<sub>ij</sub> ​is the error term for each observation.
 
-Note that the error terms in these models differ significantly. MLM accommodates individual variances in satisfaction scores (i.e., random intercept) and the interplay between time and satisfaction across individuals (i.e., random slope). In contrast, RM-ANOVA employs a singular error term (ϵ<sub>ij</sub>), which captures the discrepancy between predicted and observed values for individual j at time i. Neglecting random effects in data can lead to underestimating the standard errors of regression coefficients, potentially exaggerating the statistical significance of results, known as Type I error rates. Despite incorporating αβ<sub>ij</sub>, RM-ANOVA has limited flexibility in managing missing data and does not account for variations in intercepts and slopes across groups. Consequently, MLM is generally regarded as superior in minimizing error terms when it comes to longitudinal data.
+Note that the error terms in the RM-ANOVA versus MLM models differ significantly. MLM accommodates individual variances in satisfaction scores (i.e., random intercept) and the interplay between time and satisfaction across individuals (i.e., random slope). In contrast, RM-ANOVA employs a singular error term (ϵ<sub>ij</sub>), which captures the discrepancy between predicted and observed values for individual j at time i. Neglecting random effect in data can lead to underestimating the standard errors of regression coefficients, potentially exaggerating the statistical significance of results, known as Type I error rates. Thus, MLM is generally regarded as superior in minimizing error terms when it comes to longitudinal data.
 
 # MLM Terminologies
 
