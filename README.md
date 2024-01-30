@@ -392,6 +392,7 @@ level1_fixed_model <- lm(satisfaction ~ time_numeric, data = longitudinal_data)
 summary(level1_fixed_model)
 ```
 Here is the output:
+
 <img width="555" alt="Screen Shot 2024-01-23 at 5 05 35 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/7cab70ff-a79d-451e-be29-ae66df6ea67d">
 
 According to the output, you can see that the fixed effect of time is significant, indicating that a one-unit increase in time (i.e., month) significantly predicts a 0.89 change in satisfaction scores.
@@ -405,11 +406,12 @@ summary(random_intercept_model)
 ```
 
 Here is the output:
+
 <img width="458" alt="Screen Shot 2024-01-25 at 12 39 23 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/d0498ca7-d6e1-4f4c-ae66-36bdd9282b1b">
 
 * Regarding random effects, the random intercept for each user, with a variance of 3.148 and a standard deviation of 1.774, implies individual differences among users' baseline satisfaction levels. As for the residual variance (error variance), which is 0.678 with a standard deviation of 0.8234, these numbers indicate the variation in satisfaction scores not explained by the model.
 * For fixed effects, the coefficient for 'time_numeric' is 0.89000 with a significant p-value, indicating that for each unit increase in time, there's an expected increase of 0.89 in the satisfaction score.
-* Regarding the correlation of fixed effects, the correlation between the intercept and 'time_numeric' is -0.535. This suggests a moderate inverse relationship between these parameters within the model. In other words, if the intercept were higher (i.e., if the average satisfaction score at month 1 were higher), the effect of time on satisfaction (the slope) would tend to be lower, and vice versa. This means that users with initially high satisfaction scores might show less change over time compared to subjects with initially low scores."
+* Regarding the correlation of fixed effects, the correlation between the intercept and 'time_numeric' is -0.535. This suggests a moderate inverse relationship between these parameters within the model. In other words, if the intercept were higher (i.e., if the average satisfaction score at month 1 were higher), the effect of time on satisfaction (the slope) would tend to be lower, and vice versa. This means that users with initially high satisfaction scores might show less change over time compared to subjects with initially low scores.
 
 ### Random Slope Model 
 
@@ -420,10 +422,9 @@ random_slope_model <- lmerTest::lmer(satisfaction ~ time_numeric + (time_numeric
 summary(random_slope_model)
 ```
 Here is the output:
+
 <img width="638" alt="Screen Shot 2024-01-25 at 1 07 00 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/9911fdc0-d1c8-42d9-8c7f-3d04be986e41">
 
-
-Your text is quite clear, but it does need some grammatical adjustments for better clarity and correctness. Here's a revised version:
 
 * Notice that we no longer receive the 'boundary (singular) fit' warning after working with the new dataset, which we purposefully modified to include both random and fixed effects. However, in the real world, you may still encounter this warning depending on the nature of the dataset you are working with.
 * According to the output, the REML Criterion at Convergence (1001.7) suggests that the random slope model might provide a better fit than our previous model, as lower values generally indicate a better fit. We will reconfirm this assumption by checking the AIC and BIC values across models.
@@ -452,9 +453,9 @@ Here is the output:
 * In summary, the random_slope_model provides a statistically significantly better fit to the data than the random_intercept_model, as indicated by the lower AIC, higher log-likelihood values, and the significant result in the chi-squared test. This suggests that allowing the effect of time on satisfaction to vary across users (random slope) is important in modeling these data. Let's check the ICC to see if our assumption about adding random effects to improve the model fit is likely true.
 
 ## ICC
-* Earlier in the post, I mentioned that the Intraclass Correlation Coefficient (ICC) is used to quantify the proportion of the total variability in the data attributable to the grouping structure in mixed-effects models (such as between subjects in a longitudinal study). In other words, the ICC explains how much of the variability in the outcome variable can be explained by the random effects (i.e., random slopes and random intercepts) as opposed to the residual error (the variance not explained by the model). Here’s how you can calculate the ICC in the context of a linear mixed model.
+* Earlier in the post, I mentioned that the Intraclass Correlation Coefficient (ICC) is used to quantify the proportion of the total variability in the data attributable to the grouping structure in mixed-effects models (such as between subjects in a longitudinal study). In other words, the ICC explains how much of the variability in the outcome variable can be explained by the random effects (i.e., random slopes and random intercepts) as opposed to the residual error (the variance not explained by the model). 
 * An ICC close to 1 suggests that most of the variability in the outcome is due to differences between groups (subjects). In longitudinal data, this implies that the effects of time are not as strong as interpersonal or intergroup variability.
-* An ICC close to 0 suggests that most of the variability is due to individual differences within groups or measurement error. In longitudinal data, an ICC at 1 indicates that group or individual differences do not really explain the variance in the outcome. Let's see what it's like in our case:"
+* An ICC close to 0 suggests that most of the variability is due to individual differences within groups or measurement error. In longitudinal data, an ICC at 0 indicates that group or individual differences do not really explain the variance in the outcome. Let's see what it's like in our case:
 
 ```ruby
 performance::icc(random_slope_model)
@@ -464,11 +465,11 @@ Here is the output:
 <img width="419" alt="Screen Shot 2024-01-25 at 2 25 27 PM" src="https://github.com/KayChansiri/Longtitudinal-Multilevel-Modeling/assets/157029107/2567d957-8502-430b-9834-5729e5e5ba0b">
 
 * According to the output, we have two types of ICC: the Adjusted ICC and the Conditional ICC.
-* The Adjusted ICC is an estimate of the proportion of the total variance in the outcome that is attributable to the between-group (subject-level) variability when controlling for the fixed effects in the model. The value 0.840 indicates that 84% of the total variability in satisfaction scores is due to differences between users, after accounting for the fixed effects of time.
+* The Adjusted ICC is an estimate of the proportion of the total variance in the outcome that is attributable to the between-group (subject-level) variability when controlling for the fixed effects in the model. The value 0.840 indicates that 84% of the total variability in satisfaction scores is due to differences between users, after accounting for the fixed effects in our model, which, in this case, we do not have any except the intercept term of within-subject effects.
 * This high value suggests that our data is clustered and therefore multilevel modeling is a good analysis strategy to understand individual differences among users and the influence of the variation in satisfaction scores.
 * The Conditional ICC, on the other hand, represents the proportion of the total variance that is attributable to the the between-group (subject-level) variability when considering both the fixed and random effects. This is unlike Adjusted ICC that considers only the fixed effects.
-* The Conditional ICC of 0.738 in the output means that when considering the entire model, including both fixed and random effects, about 73.8% of the variability in satisfaction scores can be attributed to differences between users. This indicates strong clustering structure of our data but the impact is slightly lower than the Adjusted ICC that does not consider the effect of time. The Conditional ICC reflect that  the fixed effects (time) play role in explaining variance of the outcome.
-* In summary, both the Adjusted and Conditional ICC values are quite high, indicating that the differences between subjects are a major source of variability in satisfaction scores. This underscores the importance of considering the subject-level random effects in the model. The difference between the Adjusted and Conditional ICC values shows the additional variance explained by the fixed effects (i.e., time) in the model.
+* The Conditional ICC of 0.738 in the output means that when considering the entire model, including both fixed and random effects, about 73.8% of the variability in satisfaction scores can be attributed to differences between users. 
+* In summary, both the Adjusted and Conditional ICC values are quite high, indicating that the differences between subjects are a major source of variability in satisfaction scores. This underscores the importance of considering the subject-level random effects in the model. The difference between the Adjusted and Conditional ICC values shows the additional variance explained by the random effects in the model.
 
 
 
