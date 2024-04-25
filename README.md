@@ -471,4 +471,36 @@ Here is the output:
 * In summary, both the Adjusted and Conditional ICC values are quite high, indicating that the differences between subjects are a major source of variability in satisfaction scores. This underscores the importance of considering the subject-level random effects in the model. The difference between the Adjusted and Conditional ICC values shows the additional variance explained by the random effects in the model.
 
 
+# Conclusion 
+
+When working with longitudinal multilevel modeling, it's important to categorize **fixed versus random effects** and **Level 1 versus Level 2 variables**.
+
+* Level 1: Often referred to as the "within-subjects" or "lower-level" data. This level includes measurements that can vary within each unit at the next level. For example, time or time-varying variables (e.g., age) can vary within individuals.
+* Level 2: Often referred to as the "between-subjects" or "higher-level" data. This level pertains to variables that describe differences between subjects (e.g., individual characteristics).
+**Both levels can contain fixed or random effects**, depending on the nature of the variable and how it is theorized to influence the dependent variable:
+
+* Fixed Effects: These are used to estimate parameters that are assumed to be the same across all subjects. Fixed effects can be present at both Level 1 and Level 2. For example, if we conduct an experiment providing mental health treatments and measure depression over time, where each subject can be exposed to more than one intervention site at different times, the intervention site is a time-varying variable (Level 1). If we do not consider that the effects of different sites on depression could vary across individuals, the variable would be treated as a fixed, time-varying (Level 1) effect.
+* Random Effects: These account for variations at different levels that are not captured by the fixed effects. Following the example above, if we consider that the effects of intervention sites on depression could vary across individuals, the variable is treated as a random, time-varying (Level 1) effect.
+
+## Let's take a look at the last example including both time-varying and time-invariant variables, considering intervention site as a fixed-effects variable.
+### Level-1 Equation (Within-Subject Model): Depression<sub>ij</sub> = β<sub>0i</sub> + β<sub>1</sub>time<sub>ij</sub>+ β<sub>2</sub>Intervention Site<sub>ij</sub> + ϵ<sub>ij</sub>
+* Depression<sub>ij</sub> is the depression score for the i individua at time j.
+* β<sub>0i</sub> is the subject-specific intercept for the i user. It represents the expected depression score for subject i at the initial measurement.
+* β<sub>1</sub>  is the fixed effect of time, representing the average change in depression score for each unit increase in time.
+* β<sub>2</sub>  is the fixed effect of intervention site, representing the intervention site effect on depression score for individual i. Since it's a fixed effect, it is assumed constant across all individuals.
+* e<sub>ij</sub> is the residual error for the j measurement of the i individual.
+  
+### Level-2 Equation (Between-Subject Model/Radnom Intercept): β<sub>0i</sub> =  γ<sub>00</sub> + γ<sub>01</sub>Gender<sub>i</sub> + u<sub>0i</sub>
+* γ<sub>00</sub> is the overall average intercept across all subjects.
+* γ<sub>01</sub> is the fixed effect of gender on the baseline depression score, where Gender<sub>i</sub> is a binary variable (0 for males, 1 for females).
+* u<sub>0i</sub> is the random intercept for the i individual, representing the deviation of the individual’s intercept from the overall average intercept.
+
+### Level-2 Equation (Between-Subject Model/Random Slope): β<sub>1i</sub>=  γ<sub>10</sub> + u<sub>1i</sub>
+* γ<sub>10</sub> is the overall average slope (effect of time) across all individuals.
+* u<sub>1i</sub> is the random slope for the ith individual, capturing individual deviations in the time effect.
+
+### Level-2 Equation (Between-Subject Model/Random Slope for Intervention Site): β<sub>2i</sub> =  γ<sub>20</sub> 
+*  β<sub>2i</sub> Since the effects of the intervention site are not varied across individuals and are treated as fixed, there is no random component, implying that the effect of the intervention site is constant across all individuals.
+
+In summary, the choice between fixed and random effects at each level depends on your theoretical assumptions about how different factors influence the outcome variable and the structure of your data. This flexibility allows multilevel models to accurately reflect complex real-world phenomena.
 
